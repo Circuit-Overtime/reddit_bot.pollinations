@@ -143,14 +143,14 @@ async function getMergedPRsFromPreviousDay(owner = 'pollinations', repo = 'polli
   }
 
   console.log(`Found ${allPRs.length} merged PRs from previous day\n`);
-  return allPRs;
+  return { prs: allPRs, dateString };
 }
 
 /**
  * Create a merged prompt covering all PR ideas using Pollinations AI
  * Sends PR data to openai-large model for better prompt generation
  */
-async function createMergedPrompt(prs) {
+async function createMergedPrompt(prs, dateString) {
   if (!prs || prs.length === 0) {
     return {
       prompt: 'Pollinations: A free, open-source AI image generation platform with community updates',
@@ -181,29 +181,83 @@ async function createMergedPrompt(prs) {
     .map(([cat, titles]) => `${cat}: ${titles.join(', ')}`)
     .join('\n');
 
-  const systemPrompt = `You are a creative prompt engineer for comic book art generation.
-Your task is to create a vibrant, engaging image prompt for comic-styled illustrations based on software development updates.
-The prompt should:
-- Be visually descriptive and inspiring
-- Capture the essence of innovation and community collaboration
-- Include comic book art style elements (bold lines, dynamic composition, vibrant colors)
-- Reference the updates while maintaining artistic integrity
-- Be 200-400 characters
-- Include specific visual elements like bees, flowers, code, or developers
-- Use the theme "Pollinations" (growth, blooming, organic development)
+  const systemPrompt = `
+                        You are a senior visual narrative designer specializing in nature-inspired comic-book splash panels.
+                        Your role is to transform real software development updates into a single, coherent, vibrant botanical-cybernetic illustration for Pollinations.
 
-Output ONLY the image prompt, nothing else.`;
+                        CORE IDENTITY (NON-NEGOTIABLE):
+                        Pollinations represents growth, cross-pollination, openness, ecosystems, and collective flourishing.
+                        All visuals must be nature-first, organic, celebratory, and alive.
 
-  const userPrompt = `Generate a comic-styled image prompt for these Pollinations AI updates:
+                        ABSOLUTE CONSTRAINTS:
+                        1. Never mention:
+                        - Dates
+                        - Pull request numbers
+                        - Counts as numerals
+                        - GitHub, PRs, commits, repositories, or contributors explicitly
+                        2. Do not explain metaphors or break the illusion.
+                        3. Output ONLY a single image-generation prompt. No commentary.
 
-${prList}
+                        INFORMATION PRESERVATION RULE:
+                        Every distinct update provided MUST be represented by a distinct, clearly identifiable natural element in the scene.
+                        Semantic meaning must be preserved exactly through metaphor, not diluted.
 
-Categories of work:
-${categoryText}
+                        NATURE METAPHOR MAPPING (STRICT):
+                        - Bug fixes → pests removed, blight cleared, invasive weeds uprooted, diseased branches pruned
+                        - New features → new flowers blooming, rare plants sprouting, seeds germinating, new species appearing
+                        - Documentation → leaves unfurling with patterns, tree rings revealing knowledge, spores carrying wisdom
+                        - Refactors / cleanup → gardens reorganized, paths clarified, tangled roots separated
+                        - Optimizations / performance → accelerated growth, stronger winds, flowing rivers, seasonal shifts
+                        - APIs / integrations → vines interconnecting ecosystems, mycelium networks, shared root systems
+                        - Tooling / infra → animals arriving (bees, birds, insects), nests forming, habitats stabilizing
 
-Total PRs: ${prs.length}
+                        COUNT REPRESENTATION RULE:
+                        The total number of updates MUST be shown visually through:
+                        - One natural element per update
+                        - Repetition (multiple flowers, vines, creatures, leaves)
+                        - Spatial grouping
+                        Never state quantities explicitly.
 
-Create a dynamic, visually compelling comic book style prompt that celebrates these updates.`;
+                        COMPOSITION REQUIREMENTS:
+                        - Single wide comic-book splash panel
+                        - Central thriving ecosystem (garden, forest, meadow, greenhouse)
+                        - Clear separation between elements representing different updates
+                        - Visual motion: wind, rain, pollen clouds, flowing water, growing vines
+                        - Cooperative agents: gardeners, nature spirits, animals working together
+                        - Visible transformation (before/after energy embedded in the scene)
+
+                        STYLE & ENERGY:
+                        - Bold comic inks
+                        - Organic linework
+                        - Natural color palette only (forest greens, soil browns, sky blues, sunset oranges, floral purples)
+                        - No neon, no cyberpunk aesthetics
+                        - Mood: optimistic, regenerative, celebratory, alive
+
+                        POLLINATIONS SIGNATURE ELEMENTS (WEAVE SUBTLY):
+                        - Bees actively pollinating
+                        - Flowers exchanging pollen
+                        - Seeds traveling between plants
+                        - Ecosystems blending into each other
+                        - Growth spreading outward
+
+                        TECHNICAL FIDELITY REQUIREMENT:
+                        You must infer the technical intent of each update from its description and encode it visually.
+                        Nothing may be omitted.
+                        Nothing may be merged unless semantically identical.
+`
+const userPrompt = `Generate a NATURE-THEMED comic-book splash panel for these Pollinations AI updates:
+                    ${prList}
+                    BREAKDOWN:
+                    ${categoryText}
+                    Show ${prs.length} distinct natural elements (flowers, vines, animals, growth) - one per update.
+                    Use nature metaphors: bugs = pests removed, features = new blooms, docs = unfurling leaves, optimization = accelerated growth.
+                    Create an EPIC, VIBRANT nature-inspired comic splash panel with:
+                    - Thriving ecosystem (gardens, forests, flowers)
+                    - ${prs.length} DISTINCT natural elements per update
+                    - Dynamic energy (wind, rain, growth)
+                    - Bold comic inks, natural colors (greens, purples, oranges - no neon)
+                    - Celebratory, alive mood
+                    Weave ALL ${prs.length} updates into ONE lush scene with clear visual count representation.`;
 
   try {
     console.log('Generating merged prompt using Pollinations API...');
@@ -221,7 +275,7 @@ Create a dynamic, visually compelling comic book style prompt that celebrates th
           { role: 'user', content: userPrompt },
         ],
         temperature: 0.8,
-        max_tokens: 500,
+        max_tokens: 1500,
       }),
     });
 
@@ -304,8 +358,8 @@ Dynamic composition with bees pollinating code flowers, bright colors, retro com
  */
 async function getPRsAndCreatePrompt(githubToken) {
   try {
-    const prs = await getMergedPRsFromPreviousDay('pollinations', 'pollinations', githubToken);
-    const promptData = await createMergedPrompt(prs);
+    const { prs, dateString } = await getMergedPRsFromPreviousDay('pollinations', 'pollinations', githubToken);
+    const promptData = await createMergedPrompt(prs, dateString);
 
     console.log('=== Merged PR Summary ===');
     console.log(promptData.summary);
