@@ -14,7 +14,7 @@ function getEnv(key: string, required: boolean = true): string {
   return value || '';
 }
 
-function getDateRange(daysBack: number = 1): [Date, Date] {
+function getDateRange(daysBack: number = 2): [Date, Date] {
   const now = new Date();
   const endDate = now;
   const startDate = new Date(endDate.getTime() - daysBack * 24 * 60 * 60 * 1000);
