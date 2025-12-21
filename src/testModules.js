@@ -3,6 +3,7 @@
  * Run specific parts of the workflow in isolation
  */
 
+import { fileURLToPath } from 'url';
 import { getMergedPRsFromPreviousDay, createMergedPrompt } from './getPreviousDayPRs.js';
 import { generateAndSaveComicImage, enhanceComicPrompt } from './generateComicImage.js';
 
@@ -172,7 +173,6 @@ async function runAllTests() {
 
 // Run if executed directly
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  import { fileURLToPath } from 'url';
   runAllTests().catch(console.error);
 }
 

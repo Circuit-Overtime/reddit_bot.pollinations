@@ -1,11 +1,11 @@
-import { Devvit, Context } from '@devvit/public-api';
+import { Devvit } from '@devvit/public-api';
 
 const TARGET_SUBREDDIT = 'pollinations_ai';
 
 /**
  * Check if the bot has required permissions in the target subreddit
  */
-async function checkSubredditAccess(context: Context): Promise<boolean> {
+async function checkSubredditAccess(context) {
   try {
     const subreddit = await context.reddit.getSubredditById(`t5_placeholder_${TARGET_SUBREDDIT}`);
     console.log(`✓ Successfully accessed r/${TARGET_SUBREDDIT}`);
@@ -31,7 +31,7 @@ async function checkSubredditAccess(context: Context): Promise<boolean> {
 /**
  * Initialize and verify bot access
  */
-async function initializeBotAccess(context: Context): Promise<boolean> {
+async function initializeBotAccess(context) {
   console.log(`\n=== Checking Bot Access ===`);
   console.log(`Target subreddit: r/${TARGET_SUBREDDIT}`);
   
@@ -47,7 +47,7 @@ async function initializeBotAccess(context: Context): Promise<boolean> {
   return true;
 }
 
-async function main(context: Context) {
+async function main(context) {
   try {
     // 1. Verify bot access to target subreddit
     const accessVerified = await initializeBotAccess(context);
