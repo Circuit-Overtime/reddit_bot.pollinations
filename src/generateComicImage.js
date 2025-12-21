@@ -41,7 +41,7 @@ async function generateImage(prompt, pollinationsToken, attempt = 0) {
   try {
     
     const params = new URLSearchParams({
-      model: 'zimage',
+      model: 'nanobanana',
       width: 1024,
       height: 1024,
     });
@@ -151,7 +151,7 @@ function saveGenerationMetadata(imageData, promptData) {
  */
 async function testGenerateImage() {
   const testPrompt = {
-    prompt: 'Single wide comic-book splash panel, nature-first Pollinations world: a central thriving garden-forest greenhouse hybrid bursting with life, bold comic inks, organic linework, natural palette (forest greens, soil browns, sky blues, sunset oranges, floral purples), dynamic motion with wind ribbons, drifting pollen clouds, light rain sparkle, flowing rivulets, cooperative bees and small birds actively pollinating; FOUR clearly separated, distinct natural elements (one per update) arranged as readable vignettes around the center while still part of one ecosystem: (1) an “Instagram post” represented as a tall sunflower-like bloom with a naturally framed petal “window” (leaf-made border) attracting butterflies as if it’s being displayed to the meadow—seeds carried outward on the breeze to neighboring plants; (2) a bug-fix vignette: gardeners and ladybugs pruning diseased twigs and uprooting invasive weeds, revealing a clean lattice of healthy roots where tangled duplicates were removed—one main root trunk feeding multiple shoots through tidy branching, with a few pests being swept away; (3) documentation generation vignette: a young tree unfurling oversized leaves like scrolls, etched with orderly botanical patterns and tidy lines, spores of “wisdom” drifting to nearby sprouts as bees trace the patterns; (4) creative tool addition vignette: a rare new flowering plant resembling an “image grove” blossom—petals shaped like soft brushstrokes and natural pigment stains—sprouting beside an artist bower where hummingbirds and bees mix pollen like paint, creating new colorful blooms that spread into the garden; emphasize clear separation between the four elements with natural pathways and stones, visible before/after transformation energy, celebratory cooperative ecosystem blending outward, no neon, no tech UI, no text, epic vibrant splash composition.',
+    prompt: 'Bright nature-themed comic flowchart where each update is a distinct natural element: pruned branches for removing decrypt from the start script, blooming flowers for adding a Reddit link and updating the submit app template, and a vibrant flower cluster for “Highlights” plus a new treehouse labeled AI Chat Studio. Reorganized vine pathways show standardized infrastructure keys and secret cleanup, nesting animals depict workflow gating and auto-upgrade on approval, and a small cloud shading a “z-image” flower indicates upscaling temporarily disabled with the safety checker sleeping by default. Add a signpost leaf for API docs with a vision/image input example, all in emerald, golden, sky blue, orange, and purple with dynamic wind swirls, pollen bursts, water streams, and bee flight paths connecting nodes.',
     summary: 'Test image generation',
     prCount: 1,
     highlights: ['test: image generation'],

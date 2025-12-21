@@ -161,7 +161,7 @@ async function createMergedPrompt(prs, dateString) {
   }
 
   // Extract PR information
-  const prList = prs.slice(0, 10).map(pr => `#${pr.number}: ${pr.title}`).join('\n');
+  const prList = prs.slice(0, 10).map(pr => pr.title).join(', ');
   const categories = {};
   
   prs.forEach(pr => {
@@ -178,54 +178,12 @@ async function createMergedPrompt(prs, dateString) {
   });
 
   const categoryText = Object.entries(categories)
-    .map(([cat, titles]) => `${cat}: ${titles.join(', ')}`)
-    .join('\n');
+    .map(([cat, titles]) => titles.slice(0, 3).join(' • '))
+    .join(' | ');
 
-  const systemPrompt = `
-You are a nature-inspired visual storyteller. Transform software updates into a nature-themed flowchart comic illustration.
-
-STYLE:
-- Organic flowchart with natural nodes: flowers, trees, branches, wood, twigs, bees, creatures
-- Flowing vines/roots as connectors showing update relationships
-- Comic book illustration style with bold inks and natural colors
-- Celebratory, alive mood
-
-VISUAL METAPHORS:
-- Bug fixes → pest removal, pruned branches, cleared blight
-- New features → blooming flowers, sprouting seeds, new growth
-- Documentation → unfurling leaves, knowledge nodes, spore carriers
-- Refactors → reorganized gardens, clearer paths, untangled roots
-- Optimizations → accelerated growth, flowing water, seasonal cycles
-- APIs/integrations → interconnecting vines, mycelium networks, cross-pollination
-- Infrastructure → nesting animals (bees, birds), habitat stabilization
-
-FLOWCHART STRUCTURE:
-- Each update = distinct natural element (unique flower, tree, creature, branch)
-- Connected by organic flowing vines, roots, or creature paths
-- Visual groupings show relationships and dependencies
-- Include movement: wind, pollen drift, flowing water, creature activity
-
-CONSTRAINTS:
-- No dates, PR numbers, or metrics shown
-- No GitHub/code terminology visible
-- Only output the image generation prompt; no commentary
-- Weave all updates into one coherent natural ecosystem
-`
-const userPrompt = `Create a nature-themed flowchart as a comic illustration for these Pollinations updates:
-${prList}
-
-BREAKDOWN:
-${categoryText}
-
-Design a flowchart where:
-- ${prs.length} natural elements represent the ${prs.length} updates (distinct flowers, trees, creatures, wood structures)
-- Organic vines, roots, or creature paths connect related updates showing their flow
-- Comic book style with bold inks and natural colors (greens, earth tones, sky blues)
-- Dynamic movement: wind, pollen, flowing water, creature activity
-- Each element clearly distinguishable but part of one cohesive ecosystem
-- Celebratory, regenerative mood
-
-Use nature metaphors for each update type as the visual language.`;
+  const systemPrompt = `Output SHORT image prompt (2-3 sentences). Create nature-themed comic flowchart with updates as distinct natural elements (flowers, trees, creatures, vines). Bug fixes=pruned branches, Features=blooming flowers, Refactors=reorganized paths, Infrastructure=nesting animals. Bright comic style: emerald, golden, sky blue, orange, purple. Dynamic energy: wind, pollen, water, bee flight paths. Strip all dates, counts, metrics. ONLY output the image prompt.`
+const userPrompt = `Nature-themed comic flowchart: ${prList}
+Short prompt only. No dates, counts, metadata.`
 
   try {
     console.log('Generating merged prompt using Pollinations API...');
@@ -242,8 +200,8 @@ Use nature metaphors for each update type as the visual language.`;
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },
         ],
-        temperature: 0.8,
-        max_tokens: 1000,
+        temperature: 0.7,
+        max_tokens: 250,
       }),
     });
 
@@ -297,7 +255,8 @@ ${highlights.map(h => `• ${h}`).join('\n')}
     // Fallback to local prompt generation
     const comicPrompt = `Comic book style illustration celebrating ${prs.length} Pollinations updates:
 ${prs.slice(0, 5).map(p => p.title).join(', ')}.
-Dynamic composition with bees pollinating code flowers, bright colors, retro comic aesthetic.`;
+Dynamic composition with bees pollinating code flowers, bright colors, retro comic aesthetic.
+Write in pure plain text, no metadata or extra commentary or markdown`;
 
     const highlights = prs
       .slice(0, 8)
@@ -328,9 +287,6 @@ async function getPRsAndCreatePrompt(githubToken) {
   try {
     const { prs, dateString } = await getMergedPRsFromPreviousDay('pollinations', 'pollinations', githubToken);
     const promptData = await createMergedPrompt(prs, dateString);
-
-    console.log('=== Merged PR Summary ===');
-    console.log(promptData.summary);
     console.log('\n=== Generated Image Prompt ===');
     console.log(promptData.prompt);
     console.log('\n');
@@ -342,10 +298,7 @@ async function getPRsAndCreatePrompt(githubToken) {
   }
 }
 
-/**
- * Test PR fetching
- * Usage: node getPreviousDayPRs.js <github_token> [pollinations_token]
- */
+
 async function testPRFetching() {
   const githubToken = process.env.GITHUB_TOKEN;
 
