@@ -28,7 +28,7 @@ async function runFullWorkflow() {
 
     // Step 1: Fetch PRs and create prompt
     console.log('\n[STEP 1] Fetching previous day\'s PRs...');
-    const promptData = await getPRsAndCreatePrompt(githubToken);
+    const promptData = await getPRsAndCreatePrompt(githubToken, pollinationsToken);
 
     // Step 2: Generate and save comic image
     console.log('\n[STEP 2] Generating comic-styled image...');

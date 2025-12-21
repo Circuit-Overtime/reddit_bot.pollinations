@@ -5,6 +5,7 @@
 
 const GITHUB_API_BASE = 'https://api.github.com';
 const GITHUB_GRAPHQL_API = 'https://api.github.com/graphql';
+const POLLINATIONS_API = 'https://gen.pollinations.ai/v1/chat/completions';
 
 /**
  * Get date range for previous day
@@ -139,9 +140,10 @@ async function getMergedPRsFromPreviousDay(owner = 'pollinations', repo = 'polli
 }
 
 /**
- * Create a merged prompt covering all PR ideas
+ * Create a merged prompt covering all PR ideas using Pollinations AI
+ * Sends PR data to openai-large model for better prompt generation
  */
-function createMergedPrompt(prs) {
+async function createMergedPrompt(prs, pollinationsToken) {
   if (!prs || prs.length === 0) {
     return {
       prompt: 'Pollinations: A free, open-source AI image generation platform with community updates',
@@ -151,58 +153,152 @@ function createMergedPrompt(prs) {
     };
   }
 
-  // Extract key features/fixes from PR titles and bodies
-  const highlights = prs
-    .slice(0, 8) // Top 8 PRs
-    .map(pr => {
-      const title = pr.title.toLowerCase();
-      let category = 'update';
+  // Extract PR information
+  const prList = prs.slice(0, 10).map(pr => `#${pr.number}: ${pr.title}`).join('\n');
+  const categories = {};
+  
+  prs.forEach(pr => {
+    const title = pr.title.toLowerCase();
+    let category = 'update';
+    
+    if (title.includes('fix') || title.includes('bug')) category = 'bug fix';
+    else if (title.includes('feat') || title.includes('add')) category = 'feature';
+    else if (title.includes('docs')) category = 'documentation';
+    else if (title.includes('perf') || title.includes('optim')) category = 'optimization';
+    
+    if (!categories[category]) categories[category] = [];
+    categories[category].push(pr.title);
+  });
 
-      if (title.includes('fix') || title.includes('bug')) category = 'bug fix';
-      else if (title.includes('feat') || title.includes('add')) category = 'feature';
-      else if (title.includes('docs')) category = 'documentation';
-      else if (title.includes('perf') || title.includes('optim')) category = 'optimization';
+  const categoryText = Object.entries(categories)
+    .map(([cat, titles]) => `${cat}: ${titles.join(', ')}`)
+    .join('\n');
 
-      return `${category}: ${pr.title}`;
+  const systemPrompt = `You are a creative prompt engineer for comic book art generation.
+Your task is to create a vibrant, engaging image prompt for comic-styled illustrations based on software development updates.
+The prompt should:
+- Be visually descriptive and inspiring
+- Capture the essence of innovation and community collaboration
+- Include comic book art style elements (bold lines, dynamic composition, vibrant colors)
+- Reference the updates while maintaining artistic integrity
+- Be 200-400 characters
+- Include specific visual elements like bees, flowers, code, or developers
+- Use the theme "Pollinations" (growth, blooming, organic development)
+
+Output ONLY the image prompt, nothing else.`;
+
+  const userPrompt = `Generate a comic-styled image prompt for these Pollinations AI updates:
+
+${prList}
+
+Categories of work:
+${categoryText}
+
+Total PRs: ${prs.length}
+
+Create a dynamic, visually compelling comic book style prompt that celebrates these updates.`;
+
+  try {
+    console.log('Generating merged prompt using Pollinations API...');
+    
+    const response = await fetch(POLLINATIONS_API, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${pollinationsToken || 'sk_default'}`,
+      },
+      body: JSON.stringify({
+        model: 'openai-large',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt },
+        ],
+        temperature: 0.8,
+        max_tokens: 500,
+      }),
     });
 
-  const summary = `
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.warn(`API warning: ${response.status} - ${JSON.stringify(errorData).substring(0, 200)}`);
+      throw new Error(`API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const generatedPrompt = data.choices?.[0]?.message?.content?.trim();
+
+    if (!generatedPrompt) {
+      throw new Error('No prompt generated from API');
+    }
+
+    // Create PR summary and highlights
+    const highlights = prs
+      .slice(0, 8)
+      .map(pr => {
+        const title = pr.title.toLowerCase();
+        let category = 'update';
+        if (title.includes('fix') || title.includes('bug')) category = 'bug fix';
+        else if (title.includes('feat') || title.includes('add')) category = 'feature';
+        else if (title.includes('docs')) category = 'documentation';
+        else if (title.includes('perf') || title.includes('optim')) category = 'optimization';
+        return `${category}: ${pr.title}`;
+      });
+
+    const summary = `
 ${prs.length} PRs merged:
 ${highlights.map(h => `• ${h}`).join('\n')}
-  `.trim();
+    `.trim();
 
-  // Create a rich prompt for image generation
-  const prompt = `
-Create a vibrant, comic-styled illustration representing Pollinations AI updates:
-- Community-driven open source AI image generation
-- ${prs.length} improvements merged
-- Key themes: ${[...new Set(highlights.map(h => {
-    if (h.includes('bug')) return 'stability';
-    if (h.includes('feature')) return 'innovation';
-    if (h.includes('docs')) return 'education';
-    if (h.includes('optim')) return 'performance';
-    return 'growth';
-  }))].join(', ')}
+    console.log('✓ Prompt generated successfully\n');
+    console.log('Generated Prompt:');
+    console.log(generatedPrompt);
+    console.log('');
 
-Visual style: Comic book aesthetic with bright colors, dynamic composition, speech bubbles showing key features. Include: code elements, flowers/bees (Pollinations theme), happy developers, colorful energy. Retro comic art style with modern vibrancy.
-  `.trim();
+    return {
+      prompt: generatedPrompt,
+      summary,
+      prCount: prs.length,
+      highlights,
+      prs: prs.map(p => ({ number: p.number, title: p.title, url: p.url })),
+    };
+  } catch (error) {
+    console.warn(`Prompt generation failed: ${error.message}`);
+    console.log('Falling back to local prompt generation...\n');
 
-  return {
-    prompt,
-    summary,
-    prCount: prs.length,
-    highlights,
-    prs: prs.map(p => ({ number: p.number, title: p.title, url: p.url })),
-  };
+    // Fallback to local prompt generation
+    const comicPrompt = `Comic book style illustration celebrating ${prs.length} Pollinations updates:
+${prs.slice(0, 5).map(p => p.title).join(', ')}.
+Dynamic composition with bees pollinating code flowers, bright colors, retro comic aesthetic.`;
+
+    const highlights = prs
+      .slice(0, 8)
+      .map(pr => {
+        const title = pr.title.toLowerCase();
+        let category = 'update';
+        if (title.includes('fix') || title.includes('bug')) category = 'bug fix';
+        else if (title.includes('feat') || title.includes('add')) category = 'feature';
+        else if (title.includes('docs')) category = 'documentation';
+        else if (title.includes('perf') || title.includes('optim')) category = 'optimization';
+        return `${category}: ${pr.title}`;
+      });
+
+    return {
+      prompt: comicPrompt,
+      summary: `${prs.length} PRs merged (fallback)`,
+      prCount: prs.length,
+      highlights,
+      prs: prs.map(p => ({ number: p.number, title: p.title, url: p.url })),
+    };
+  }
 }
 
 /**
  * Main export function
  */
-async function getPRsAndCreatePrompt(githubToken) {
+async function getPRsAndCreatePrompt(githubToken, pollinationsToken) {
   try {
     const prs = await getMergedPRsFromPreviousDay('pollinations', 'pollinations', githubToken);
-    const promptData = createMergedPrompt(prs);
+    const promptData = await createMergedPrompt(prs, pollinationsToken);
 
     console.log('=== Merged PR Summary ===');
     console.log(promptData.summary);

@@ -45,6 +45,7 @@ async function testCreatePrompt() {
   console.log('\n=== TEST 2: Create Merged Prompt ===\n');
 
   const githubToken = process.env.GITHUB_TOKEN;
+  const pollinationsToken = process.env.POLLINATIONS_TOKEN;
 
   if (!githubToken) {
     console.error('❌ GITHUB_TOKEN not set');
@@ -53,13 +54,13 @@ async function testCreatePrompt() {
 
   try {
     const prs = await getMergedPRsFromPreviousDay('pollinations', 'pollinations', githubToken);
-    const promptData = createMergedPrompt(prs);
+    const promptData = await createMergedPrompt(prs, pollinationsToken);
 
     console.log(`✓ Created prompt for ${promptData.prCount} PRs\n`);
     console.log('Summary:');
     console.log(promptData.summary);
-    console.log('\nPrompt (first 300 chars):');
-    console.log(promptData.prompt.substring(0, 300) + '...');
+    console.log('\nGenerated Prompt:');
+    console.log(promptData.prompt);
 
     return promptData;
   } catch (error) {
