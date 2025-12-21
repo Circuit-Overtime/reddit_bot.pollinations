@@ -12,7 +12,10 @@
     "type-check": "tsc --build"
   },
   "dependencies": {
-    "@devvit/public-api": "0.12.6"
+    "@devvit/public-api": "0.12.6",
+    "axios": "^1.13.2",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7"
   },
   "devDependencies": {
     "devvit": "0.12.6",
