@@ -140,7 +140,7 @@ async function getMergedPRsFromPreviousDay(owner = 'pollinations', repo = 'polli
     return { prs: allPRs, dateString };
 }
 
-async function createMergedPrompt(prs : any[], dateString: string) {
+async function createImagePrompt(prs : any[], dateString: string) {
     if (!prs || prs.length === 0) {
         return {
             prompt: 'Pollinations: A free, open-source AI image generation platform with community updates',
@@ -253,7 +253,7 @@ Write in pure plain text, no metadata or extra commentary or markdown`;
 async function getPRsAndCreatePrompt(githubToken : string) {
     try {
         const { prs, dateString } = await getMergedPRsFromPreviousDay('pollinations', 'pollinations', githubToken);
-        const promptData = await createMergedPrompt(prs, dateString);
+        const promptData = await createImagePrompt(prs, dateString);
         console.log('\n=== Generated Image Prompt ===');
         console.log(promptData.prompt);
         console.log('\n');
@@ -345,3 +345,4 @@ async function generateImage(prompt : string, attempt = 0) {
     }
 }
 
+export { getMergedPRsFromPreviousDay, getPRsAndCreatePrompt, generateImage, generateTitleFromPRs };
