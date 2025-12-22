@@ -1,21 +1,13 @@
-/**
- * Module to fetch and merge PRs from the previous day
- * Gets merged PRs from pollinations/pollinations repo
- */
-
 import dotenv from 'dotenv';
 dotenv.config();
 const GITHUB_API_BASE = 'https://api.github.com';
 const GITHUB_GRAPHQL_API = 'https://api.github.com/graphql';
 const POLLINATIONS_API = 'https://gen.pollinations.ai/v1/chat/completions';
 
-/**
- * Get date range for previous day
- */
 function getPreviousDayRange() {
   const now = new Date();
-  const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // Start of today
-  const startDate = new Date(endDate.getTime() - 24 * 60 * 60 * 1000); // Start of yesterday
+  const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const startDate = new Date(endDate.getTime() - 24 * 60 * 60 * 1000);
   
   return {
     startDate,
@@ -24,9 +16,6 @@ function getPreviousDayRange() {
   };
 }
 
-/**
- * Fetch merged PRs from the previous day
- */
 async function getMergedPRsFromPreviousDay(owner = 'pollinations', repo = 'pollinations', githubToken) {
   if (!githubToken) {
     throw new Error('GitHub token is required');
@@ -113,7 +102,6 @@ async function getMergedPRsFromPreviousDay(owner = 'pollinations', repo = 'polli
       for (const pr of nodes) {
         const mergedDate = new Date(pr.mergedAt);
 
-        // Filter PRs from previous day only (stop if we go before previous day)
         if (mergedDate >= startDate && mergedDate < endDate) {
           allPRs.push({
             number: pr.number,
@@ -125,9 +113,8 @@ async function getMergedPRsFromPreviousDay(owner = 'pollinations', repo = 'polli
             mergedAt: pr.mergedAt,
           });
         } else if (mergedDate < startDate) {
-          // Stop fetching if we've gone past the previous day
           console.log(`  Stopping: reached PRs before ${dateString}`);
-          pageNum = 999; // Force exit of while loop
+          pageNum = 999;
           break;
         }
       }
@@ -146,10 +133,6 @@ async function getMergedPRsFromPreviousDay(owner = 'pollinations', repo = 'polli
   return { prs: allPRs, dateString };
 }
 
-/**
- * Create a merged prompt covering all PR ideas using Pollinations AI
- * Sends PR data to openai-large model for better prompt generation
- */
 async function createMergedPrompt(prs, dateString) {
   if (!prs || prs.length === 0) {
     return {
@@ -160,7 +143,6 @@ async function createMergedPrompt(prs, dateString) {
     };
   }
 
-  // Extract PR information
   const prList = prs.slice(0, 10).map(pr => pr.title).join(', ');
   const categories = {};
   
@@ -182,7 +164,7 @@ async function createMergedPrompt(prs, dateString) {
     .join(' | ');
 
   const systemPrompt = `Output SHORT image prompt (2-3 sentences). Create nature-themed comic flowchart with updates as distinct natural elements (flowers, trees, creatures, vines). Bug fixes=pruned branches, Features=blooming flowers, Refactors=reorganized paths, Infrastructure=nesting animals. Bright comic style: emerald, golden, sky blue, orange, purple. Dynamic energy: wind, pollen, water, bee flight paths. Strip all dates, counts, metrics. ONLY output the image prompt.`
-const userPrompt = `Nature-themed comic flowchart: ${prList}
+  const userPrompt = `Nature-themed comic flowchart: ${prList}
 Short prompt only. No dates, counts, metadata.`
 
   try {
@@ -218,7 +200,6 @@ Short prompt only. No dates, counts, metadata.`
       throw new Error('No prompt generated from API');
     }
 
-    // Create PR summary and highlights
     const highlights = prs
       .slice(0, 8)
       .map(pr => {
@@ -252,7 +233,6 @@ ${highlights.map(h => `• ${h}`).join('\n')}
     console.warn(`Prompt generation failed: ${error.message}`);
     console.log('Falling back to local prompt generation...\n');
 
-    // Fallback to local prompt generation
     const comicPrompt = `Comic book style illustration celebrating ${prs.length} Pollinations updates:
 ${prs.slice(0, 5).map(p => p.title).join(', ')}.
 Dynamic composition with bees pollinating code flowers, bright colors, retro comic aesthetic.
@@ -280,9 +260,6 @@ Write in pure plain text, no metadata or extra commentary or markdown`;
   }
 }
 
-/**
- * Main export function
- */
 async function getPRsAndCreatePrompt(githubToken) {
   try {
     const { prs, dateString } = await getMergedPRsFromPreviousDay('pollinations', 'pollinations', githubToken);
@@ -297,7 +274,6 @@ async function getPRsAndCreatePrompt(githubToken) {
     throw error;
   }
 }
-
 
 async function testPRFetching() {
   const githubToken = process.env.GITHUB_TOKEN;
@@ -327,7 +303,4 @@ async function testPRFetching() {
   }
 }
 
-
-
-// testPRFetching().catch(console.error);
 export { getMergedPRsFromPreviousDay, createMergedPrompt, getPRsAndCreatePrompt, getPreviousDayRange };
