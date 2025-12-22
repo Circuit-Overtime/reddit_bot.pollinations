@@ -1,4 +1,4 @@
-import { Devvit } from '@devvit/public-api';
+import { Devvit, RunAs } from '@devvit/public-api';
 import LINK from './link.ts';
 
 
@@ -15,13 +15,16 @@ Devvit.addMenuItem({
         type: 'image',
       });
 
+      console.log('Image uploaded to Reddit:', imageAsset);
+
       // 2. Submit the post using the i.redd.it URL returned by the upload
       await context.reddit.submitPost({
         subredditName: context.subredditName ?? 'pollinations_ai',
         title: 'Pollinations AI – Generated Visual',
         kind: 'image',
-        url: imageAsset.mediaUrl, // This is the corrected field
+        imageUrls: [imageAsset.mediaUrl],
       });
+
 
       context.ui.showToast('Image posted successfully!');
     } catch (error) {
