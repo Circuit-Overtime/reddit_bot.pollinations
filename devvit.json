@@ -1,0 +1,13 @@
+{
+  "name": "polli-ai",
+  "permissions": {
+    "media": true,
+    "reddit": true
+  },
+  "blocks": {
+    "entry": "src/main.ts"
+  },
+  "dev": {
+    "subreddit": "polli_ai_dev"
+  }
+}
