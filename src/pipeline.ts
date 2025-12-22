@@ -341,4 +341,4 @@ async function generateImage(prompt : string, attempt = 0) {
     }
 }
 
-export { getMergedPRsFromPreviousDay, getPRsAndCreatePrompt, generateImage, generateTitleFromPRs };
+export {getPRsAndCreatePrompt, generateImage, generateTitleFromPRs };

@@ -1,6 +1,5 @@
-import { Devvit, RunAs } from '@devvit/public-api';
-import LINK from './link.ts';
-import { getMergedPRsFromPreviousDay, getPRsAndCreatePrompt, generateImage, generateTitleFromPRs } from './pipeline.ts';
+import { Devvit} from '@devvit/public-api';
+import {getPRsAndCreatePrompt, generateImage, generateTitleFromPRs } from './pipeline.ts';
 import dotenv from 'dotenv';
 dotenv.config();
 
