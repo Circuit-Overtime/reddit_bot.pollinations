@@ -3,7 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import {getPRsAndCreatePrompt, generateTitleFromPRs} from './getPreviousDayPRs.js';
-import postImageToReddit from './image_post.js';
+import { postImageToSubreddit } from './image_post.js';
 
 dotenv.config();
 
@@ -15,6 +15,7 @@ const MAX_RETRIES = 3;
 const INITIAL_RETRY_DELAY = 2;
 
 function ensureOutputDirectory() {
+  
   const outputDir = path.join(__dirname, '..', 'generated_images');
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
@@ -86,6 +87,7 @@ async function generateAndSaveComicImage(promptData, pollinationsToken = null) {
 
     return {
         success: true,
+        buffer: imageBuffer.buffer,
         url: imageBuffer.url,
         filename: filename,
         filepath: filepath,
@@ -100,7 +102,7 @@ async function generateAndSaveComicImage(promptData, pollinationsToken = null) {
   }
 }
 
-async function testGenerateImage() {
+async function testGenerateImage(context) {
   const githubToken = process.env.GITHUB_TOKEN;
 
   console.log('\n╔════════════════════════════════════════════════════════════╗');
@@ -121,7 +123,7 @@ async function testGenerateImage() {
 
   console.log('\n=== Posting to Reddit ===\n');
   try {
-    await postImageToReddit(result.url, title, promptData.summary);
+    await postImageToSubreddit(context, 'pollinations_ai', title, result.buffer);
     
     console.log('╔════════════════════════════════════════════════════════════╗');
     console.log('║                  TEST PASSED ✓                            ║');

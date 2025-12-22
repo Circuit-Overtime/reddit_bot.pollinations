@@ -353,4 +353,4 @@ async function testPRFetching() {
   }
 }
 
-export {getPRsAndCreatePrompt, generateTitleFromPRs};
+export {getPRsAndCreatePrompt, generateTitleFromPRs, getMergedPRsFromPreviousDay, createMergedPrompt};

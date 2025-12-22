@@ -4,11 +4,10 @@ export async function postImageToSubreddit(
   title,
   imageArrayBuffer
 ) {
-  // Upload image to Reddit (binary, not URL)
   const upload = await context.reddit.uploadMedia({
     subredditName,
     mimeType: 'image/png',
-    data: imageArrayBuffer, // ArrayBuffer or Uint8Array
+    data: imageArrayBuffer, 
   });
 
   if (!upload || !upload.mediaId) {
@@ -21,6 +20,10 @@ export async function postImageToSubreddit(
     title,
     mediaId: upload.mediaId,
   });
+
+  console.log(`✓ Posted successfully to r/${subredditName}`);
+  console.log(`  Title: ${title}`);
+  console.log(`  Post URL: https://reddit.com${post.permalink}\n`);
 
   return post;
 }
