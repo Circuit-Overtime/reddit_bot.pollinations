@@ -329,5 +329,5 @@ async function testPRFetching() {
 
 
 
-testPRFetching().catch(console.error);
+// testPRFetching().catch(console.error);
 export { getMergedPRsFromPreviousDay, createMergedPrompt, getPRsAndCreatePrompt, getPreviousDayRange };

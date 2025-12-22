@@ -3,7 +3,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import {getPRsAndCreatePrompt} from './getPreviousDayPRs.js';
-import { isRPLColor } from '@devvit/public-api/devvit/internals/helpers/color.js';
 
 dotenv.config();
 
@@ -14,9 +13,6 @@ const POLLINATIONS_IMAGE_API = 'https://gen.pollinations.ai/image';
 const MAX_RETRIES = 3;
 const INITIAL_RETRY_DELAY = 2;
 
-/**
- * Ensure output directory exists
- */
 function ensureOutputDirectory() {
   const outputDir = path.join(__dirname, '..', 'generated_images');
   if (!fs.existsSync(outputDir)) {
@@ -26,9 +22,6 @@ function ensureOutputDirectory() {
   return outputDir;
 }
 
-/**
- * Generate image from prompt using Pollinations API with retries
- */
 async function generateImage(prompt, pollinationsToken, attempt = 0) {
   if (attempt > 0) {
     const delay = INITIAL_RETRY_DELAY * Math.pow(2, attempt - 1);
@@ -37,7 +30,6 @@ async function generateImage(prompt, pollinationsToken, attempt = 0) {
   }
 
   try {
-    
     const params = new URLSearchParams({
       model: 'nanobanana',
       width: 1024,
@@ -70,9 +62,6 @@ async function generateImage(prompt, pollinationsToken, attempt = 0) {
   }
 }
 
-/**
- * Generate and save comic image from prompt data
- */
 async function generateAndSaveComicImage(promptData, pollinationsToken = null) {
   try {
     console.log('\n=== Generating Comic Image ===\n');
@@ -85,10 +74,8 @@ async function generateAndSaveComicImage(promptData, pollinationsToken = null) {
     console.log(`Prompt: ${promptData.prompt.substring(0, 100)}...\n`);
     console.log(`Generating image...`);
 
-    // Generate image
     const imageBuffer = await generateImage(promptData.prompt, pollinationsToken);
 
-    // Save to disk
     fs.writeFileSync(filepath, imageBuffer.buffer);
     const fileSizeKb = (imageBuffer.buffer.length / 1024).toFixed(2);
 
@@ -98,8 +85,10 @@ async function generateAndSaveComicImage(promptData, pollinationsToken = null) {
 
     return {
         success: true,
-        url : imageBuffer.url,
-        
+        url: imageBuffer.url,
+        filename: filename,
+        filepath: filepath,
+        fileSizeKb: fileSizeKb,
     };
   } catch (error) {
     console.error('Error generating image:', error.message);
@@ -110,7 +99,6 @@ async function generateAndSaveComicImage(promptData, pollinationsToken = null) {
   }
 }
 
-
 async function testGenerateImage() {
   const githubToken = process.env.GITHUB_TOKEN;
 
@@ -118,10 +106,10 @@ async function testGenerateImage() {
   console.log('║              TEST IMAGE GENERATION                         ║');
   console.log('╚════════════════════════════════════════════════════════════╝\n');
 
-  const prompt = await getPRsAndCreatePrompt(githubToken);
-  const result = await generateAndSaveComicImage(prompt);
+  const promptString = await getPRsAndCreatePrompt(githubToken);
+  const promptData = { prompt: promptString };
+  const result = await generateAndSaveComicImage(promptData);
   console.log(result.url);
-
 
   if (result.success) {
     console.log('╔════════════════════════════════════════════════════════════╗');
@@ -137,5 +125,3 @@ async function testGenerateImage() {
 }
 
 testGenerateImage().catch(console.error);
-
-// export { generateAndSaveComicImage, saveGenerationMetadata, testGenerateImage };
