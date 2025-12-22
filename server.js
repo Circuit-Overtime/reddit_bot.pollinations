@@ -1,12 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 
 dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const POLLINATIONS_IMAGE_API = 'https://gen.pollinations.ai/image';
 const GITHUB_GRAPHQL_API = 'https://api.github.com/graphql';
@@ -26,7 +22,7 @@ function getPreviousDayRange() {
 }
 
 function ensureOutputDirectory() {
-    const outputDir = path.join(__dirname, '..', 'generated_images');
+    const outputDir = path.join(process.cwd(), 'generated_images');
     if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir, { recursive: true });
         console.log(`✓ Created output directory: ${outputDir}`);

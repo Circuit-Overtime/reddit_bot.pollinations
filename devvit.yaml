@@ -1,5 +1,7 @@
 name: polly-ai
 
+main: ./main.ts
+
 permissions:
   - scope: reddit.managePosts
     reason: "Post images to subreddit"
