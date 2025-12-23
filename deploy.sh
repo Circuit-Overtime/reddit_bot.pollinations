@@ -15,16 +15,35 @@ fi
 echo "✓ Pipeline completed, waiting 5 seconds for link.ts to update..."
 sleep 5
 
-echo "📤 Step 2: Updating the app..."
-npx devvit upload
-if [ $? -ne 0 ]; then
-  echo "❌ Update failed"
-  exit 1
-fi
-echo "✓ App updated successfully"
-sleep 2
-echo "📊 Step 3: Watching console logs for image upload..."
-echo "The AppUpgrade trigger will fire and post the image to r/$SUBREDDIT"
+echo "📤 Step 2: Starting playtest mode..."
+npx devvit playtest "$SUBREDDIT" &
+PLAYTEST_PID=$!
+
+sleep 3
+
+echo "📝 Step 3: Triggering update (modify main.ts)..."
+echo "" >> src/main.ts
+
+echo "📊 Step 4: Watching for successful image post..."
 echo ""
 
-npx devvit logs "$SUBREDDIT"
+timeout=120
+elapsed=0
+interval=2
+
+while [ $elapsed -lt $timeout ]; do
+  if npx devvit logs "$SUBREDDIT" 2>&1 | grep -q "being created asynchronously"; then
+    echo ""
+    echo "✅ Image post triggered successfully!"
+    echo "Exiting safely..."
+    kill $PLAYTEST_PID 2>/dev/null
+    exit 0
+  fi
+  
+  sleep $interval
+  elapsed=$((elapsed + interval))
+done
+
+echo "❌ Timeout waiting for image post"
+kill $PLAYTEST_PID 2>/dev/null
+exit 1
