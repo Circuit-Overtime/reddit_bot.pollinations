@@ -91,12 +91,12 @@ async function getMergedPRsFromPreviousDay(owner : any = 'pollinations', repo : 
 
             const data = await response.json();
 
-            if (data.errors) {
-                console.error('GraphQL errors:', data.errors);
+            if ((data as any).errors) {
+                console.error('GraphQL errors:', (data as any).errors);
                 break;
             }
 
-            const prData = data.data.repository.pullRequests;
+            const prData = (data as any).data.repository.pullRequests;
             const nodes = prData.nodes;
             const pageInfo = prData.pageInfo;
 
@@ -180,7 +180,7 @@ Short prompt only. No dates, counts, metadata.`
         }
 
         const data = await response.json();
-        const generatedPrompt = data.choices?.[0]?.message?.content?.trim();
+        const generatedPrompt = (data as any).choices?.[0]?.message?.content?.trim();
 
         if (!generatedPrompt) {
             throw new Error('No prompt generated from API');
@@ -292,7 +292,7 @@ Title only, no explanation.`;
         }
 
         const data = await response.json();
-        let title = data.choices?.[0]?.message?.content?.trim() || '';
+        let title = (data as any).choices?.[0]?.message?.content?.trim() || '';
         
         title = title.replace(/^["']|["']$/g, '').trim();
         

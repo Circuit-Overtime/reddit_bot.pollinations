@@ -1,5 +1,5 @@
 import { Devvit, SettingScope } from '@devvit/public-api';
-import {getPRsAndCreatePrompt, generateImage, generateTitleFromPRs } from './pipeline.ts';
+import {getPRsAndCreatePrompt, generateImage, generateTitleFromPRs } from './pipeline';
 
 Devvit.configure({
   http: {
