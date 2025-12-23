@@ -1,7 +1,8 @@
-import { Devvit, SettingScope } from '@devvit/public-api';
-import {getPRsAndCreatePrompt, generateImage, generateTitleFromPRs } from './pipeline';
+import {LINK, TITLE} from './link.js';
+import { Devvit } from '@devvit/public-api';
 
 Devvit.configure({
+<<<<<<< HEAD
   http: {
     domains: ['gen.pollinations.ai', 'api.github.com'],
   },
@@ -30,43 +31,38 @@ Devvit.addMenuItem({
   location: 'subreddit',
   forUserType: 'moderator',
   onPress: async (_, context) => {
-    try {
-      const githubToken = await context.settings.get('gh_token');
-      const pollinationsToken = await context.settings.get('p_key');
-      
-      if (!githubToken) {
-        throw new Error('GitHub token not configured. Please set it in app settings.');
-      }
-      if (!pollinationsToken) {
-        throw new Error('Pollinations token not configured. Please set it in app settings.');
-      }
-      
-      const promptData = await getPRsAndCreatePrompt(githubToken as string, pollinationsToken as string);
-      const imageData = await generateImage(promptData.prompt, pollinationsToken as string);
-      const title = await generateTitleFromPRs(promptData.summary, String(promptData.prCount), pollinationsToken as string);
+=======
+  redditAPI: true,
+  media: true,
+});
 
+Devvit.addTrigger({
+  event: 'AppUpgrade',
+  onEvent: async (event, context) => {
+>>>>>>> aae439bf521c71f7e853e48cc3083318f201c05d
+    try {
       const imageAsset = await context.media.upload({
-      url: imageData.url,
-      type: 'image',
+        url: LINK,
+        type: 'image',
       });
 
       await new Promise((resolve) => setTimeout(resolve, 5000));
-      await context.reddit.submitPost({
-      subredditName: context.subredditName ?? 'pollinations_ai',
-      title: title,
-      kind: 'image',
-      imageUrls: [imageAsset.mediaUrl],
+
+      const post = await context.reddit.submitPost({
+        subredditName: 'pollinations_ai',
+        title: TITLE,
+        kind: 'image',
+        imageUrls: [imageAsset.mediaUrl],
       });
 
-      context.ui.showToast('Image posted successfully!');
-    }
-    
-    catch (error) {
-      if (error instanceof Error && error.message.includes('is being created asynchronously')) {
-        context.ui.showToast('Image posted! Processing on Reddit...');
+      console.log(`Posted image with ID: ${post.id}`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      
+      if (errorMessage.includes('being created asynchronously')) {
+        console.log('✅ Image is being posted asynchronously and will appear soon');
       } else {
-        console.error('Upload failed:', error);
-        context.ui.showToast('Failed to upload image to Reddit.');
+        console.error('❌ Error posting image:', error);
       }
     }
   },
