@@ -1,30 +1,6 @@
 import { Devvit, RunAs } from '@devvit/public-api';
 import {LINK, TITLE} from './link.js';
 
-// Devvit.configure({
-//   http: {
-//     domains: ['https://gen.pollinations.ai', 'https://api.github.com'],
-//   },
-// });
-
-
-// Devvit.addSettings([
-//   {
-//     type: 'string',
-//     name: 'gh_token',
-//     label: 'GitHub Token',
-//     isSecret: true,
-//     scope: SettingScope.App, 
-//   },
-//   {
-//     type: 'string',
-//     name: 'p_key',
-//     label: 'Polli Key',
-//     isSecret: true,
-//     scope: SettingScope.App,
-//   },
-// ])
-
 Devvit.addMenuItem({
   label: 'Post Pollinations Image',
   location: 'subreddit',
