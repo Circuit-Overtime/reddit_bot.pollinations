@@ -29,35 +29,37 @@ async function getMergedPRsFromPreviousDay(owner : any = 'pollinations', repo : 
 
     const query = `
         query($owner: String!, $repo: String!, $cursor: String) {
-            repository(owner: $owner, name: $repo) {
-                pullRequests(
-                    states: MERGED
-                    first: 100
-                    after: $cursor
-                    orderBy: {field: UPDATED_AT, direction: DESC}
-                ) {
-                    pageInfo {
-                        hasNextPage
-                        endCursor
-                    }
-                    nodes {
-                        number
-                        title
-                        body
-                        url
-                        mergedAt
-                        author {
-                            login
-                        }
-                        labels(first: 10) {
-                            nodes {
-                                name
-                            }
-                        }
-                    }
-                }
+      repository(owner: $owner, name: $repo) {
+        pullRequests(
+          states: MERGED
+          first: 100
+          after: $cursor
+          orderBy: {field: UPDATED_AT, direction: DESC}
+          baseRefName: "main"
+        ) {
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
+          nodes {
+            number
+            title
+            body
+            url
+            mergedAt
+            updatedAt
+            author {
+              login
             }
+            labels(first: 10) {
+              nodes {
+                name
+              }
+            }
+          }
         }
+      }
+    }
     `;
 
     const headers = {
