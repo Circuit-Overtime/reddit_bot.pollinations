@@ -1,4 +1,4 @@
-import { Devvit, SettingScope } from '@devvit/public-api';
+import { Devvit, RunAs } from '@devvit/public-api';
 import {LINK, TITLE} from './link.js';
 
 // Devvit.configure({
@@ -40,6 +40,7 @@ Devvit.addMenuItem({
       await new Promise((resolve) => setTimeout(resolve, 5000));
       await context.reddit.submitPost({
       subredditName: context.subredditName ?? 'pollinations_ai',
+      runAs: "USER",
       title: TITLE,
       kind: 'image',
       imageUrls: [imageAsset.mediaUrl],
