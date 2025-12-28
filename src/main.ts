@@ -1,5 +1,5 @@
 import {LINK, TITLE} from './link.js';
-import { Devvit } from '@devvit/public-api';
+import { Devvit} from '@devvit/public-api';
 
 Devvit.configure({
   redditAPI: true,
@@ -38,6 +38,8 @@ Devvit.addTrigger({
 });
 
 export default Devvit;
+
+
 
 
 
