@@ -71,10 +71,18 @@ npx devvit playtest "$SUBREDDIT" &
 PLAYTEST_PID=$!
 sleep 3
 
-echo "📝 Step 3: Triggering update (modify main.ts)..."
+
+echo "📦 Step 3: Committing and pushing changes to GitHub..."
+git add .
+git commit -m "Deploy updated link.ts and main.ts"
+git push origin main
+
+
+echo "📝 Step 4: Triggering update (modify main.ts)..."
 echo "" >> src/main.ts
 
-echo "📊 Step 4: Watching for successful image post..."
+
+echo "📊 Step 5: Watching for successful image post..."
 echo ""
 
 echo "⏱️  Keeping process alive for 2 minutes..."
