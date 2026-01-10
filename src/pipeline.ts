@@ -7,9 +7,6 @@ const GITHUB_GRAPHQL_API = 'https://api.github.com/graphql';
 const POLLINATIONS_API = 'https://gen.pollinations.ai/v1/chat/completions';
 const MAX_RETRIES = 2;
 const INITIAL_RETRY_DELAY = 5;
-
-
-
 const githubToken = process.env.GITHUB_TOKEN
 const pollinationsToken = process.env.POLLINATIONS_TOKEN
 
@@ -19,7 +16,6 @@ throw new Error('GitHub token not configured. Please set it in app settings.');
 if (!pollinationsToken) {
 throw new Error('Pollinations token not configured. Please set it in app settings.');
 }
-
 
 function getPreviousDayRange() {
     const now = new Date();
@@ -282,6 +278,7 @@ async function generateTitleFromPRs(prs : Array<string>,  pollactionsToken : str
         - Internet-native humor
         - Zero corporate or marketing tone
         - No emojis
+        - No markdown formatting
         Output:
         Only one title you can use around 20-30 words. Nothing else.
         Embed the date naturally in the middle with a funny context.
