@@ -366,7 +366,6 @@ async function generateImage(prompt : string, pollactionsToken : string, attempt
     }
 }
 
-
 async function pipeline(githubToken : string, pollactionsToken : string) {
     try {
         const result = await getMergedPRsFromPreviousDay('pollinations', 'pollinations', githubToken);
@@ -408,27 +407,18 @@ async function pipeline(githubToken : string, pollactionsToken : string) {
 
 
 (async () => {
-const promptData = await getPRsAndCreatePrompt(githubToken as string, pollinationsToken as string);
+const promptData = await pipeline(githubToken as string, pollinationsToken as string);
 console.log(promptData)
-// const imageData = await generateImage(promptData.prompt, pollinationsToken as string);
-// const promptData = {
-//     summary: 'Bright comic-style nature flowchart where each update is a distinct element: blooming flowers for improved model selection UI (dual names, better tooltip), Vertex AI migration, backfill priority/options, and dynamic pricing from real usage data; pruned branches for Polar sandbox token/dev setup and API docs schema cleanup; reorganized vine paths for switching to Mermaid diagrams; nesting animals for infrastructure/config cleanups and moving the profile README. Use emerald, golden, sky blue, orange, purple with dynamic wind swirls, drifting pollen, flowing water arrows, and bee flight paths connecting each node.',
-//     prCount: 13,
-//     highlights: [],
-//     prs: [],
-//     dateString: new Date().toISOString().split('T')[0],
-// };
 console.log('Final Results:');
-// console.log(`Image URL: ${imageData.url}`);
-// const fs = await import('fs');
-// const linkTsPath = new URL('link.ts', import.meta.url);
-// const updatedLinkTs = `
-// const LINK = "${imageData.url}";
-// const TITLE = "${TITLE}";
-// export {LINK, TITLE};
-// `;
-
-// fs.writeFileSync(linkTsPath, updatedLinkTs, 'utf-8');
-// console.log('\n✓ link.ts updated successfully');
+console.log(`Image URL: ${promptData.LINK}`);
+const fs = await import('fs');
+const linkTsPath = new URL('link.ts', import.meta.url);
+const updatedLinkTs = `
+const LINK = "${promptData.LINK}";
+const TITLE = "${promptData.TITLE}";
+export {LINK, TITLE};
+`;
+fs.writeFileSync(linkTsPath, updatedLinkTs, 'utf-8');
+console.log('\n✓ link.ts updated successfully');
 })();
 
