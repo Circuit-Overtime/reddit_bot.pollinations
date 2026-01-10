@@ -1,4 +1,4 @@
-import {LINK, TITLE, SUBREDDIT} from './link.js';
+import {LINK, TITLE} from './link.js';
 import { Devvit} from '@devvit/public-api';
 
 Devvit.configure({
@@ -41,5 +41,8 @@ Devvit.addTrigger({
 });
 
 export default Devvit;
+
+
+
 
 

@@ -410,9 +410,9 @@ console.log('Final Results:');
 console.log(`Image URL: ${promptData.LINK}`);
 const fs = await import('fs');
 const linkTsPath = new URL('link.ts', import.meta.url);
-const updatedLinkTs = `
-const LINK = "${promptData.LINK}";
-const TITLE = "${promptData.TITLE}";
+const escapedTitle = promptData.TITLE.replace(/\"/g, '\\"').replace(/\n/g, ' ').replace(/\r/g, '');
+const updatedLinkTs = `const LINK = "${promptData.LINK}";
+const TITLE = "${escapedTitle}";
 export {LINK, TITLE};
 `;
 fs.writeFileSync(linkTsPath, updatedLinkTs, 'utf-8');
