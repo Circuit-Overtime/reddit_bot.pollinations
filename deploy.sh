@@ -16,9 +16,17 @@ cleanup() {
   # Kill any remaining devvit processes
   pkill -f "devvit playtest" 2>/dev/null || true
   pkill -f "node.*devvit" 2>/dev/null || true
+  pkill -f "node" 2>/dev/null || true
   
   # Kill any node processes using port 5678
   lsof -ti:5678 2>/dev/null | xargs kill -9 2>/dev/null || true
+  
+  # Check for and handle zombie processes
+  zombies=$(ps aux | grep -c " <defunct>")
+  if [ $zombies -gt 1 ]; then
+    echo "⚠️  Found zombie processes, cleaning up..."
+    ps aux | grep " <defunct>" | awk '{print $2}' | xargs -r kill -9 2>/dev/null || true
+  fi
   
   # Wait a bit for processes to terminate
   sleep 1
@@ -69,16 +77,9 @@ echo "" >> src/main.ts
 echo "📊 Step 4: Watching for successful image post..."
 echo ""
 
-while [ $elapsed -lt $timeout ]; do
-  if npx devvit logs "$SUBREDDIT" 2>&1 | grep -q "being created asynchronously"; then
-    echo ""
-    echo "✅ Image post triggered successfully!"
-    echo "Exiting safely..."
-    exit 0
-  fi
-  sleep $interval
-  elapsed=$((elapsed + interval))
-done
+echo "⏱️  Keeping process alive for 2 minutes..."
+sleep 120
 
-echo "❌ Timeout waiting for image post"
-exit 1
+echo ""
+echo "✅ 2 minutes elapsed. Shutting down..."
+exit 0

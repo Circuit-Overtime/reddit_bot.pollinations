@@ -278,7 +278,13 @@ async function generateTitleFromPRs(prs : Array<string>,  pollactionsToken : str
         - Internet-native humor
         - Zero corporate or marketing tone
         - No emojis
-        - No markdown formatting
+        - No markdown formatting remove any ** or backticks or [] () of markdown
+        - Don't pick any internal information about the PRs
+        Constraints:
+        - Keep the internal dev PR information private
+        - No dates except the one provided
+        - No more than 30 words
+        - No markdown formatting remove any ** or backticks or [] () of markdown
         Output:
         Only one title you can use around 20-30 words. Nothing else.
         Embed the date naturally in the middle with a funny context.
