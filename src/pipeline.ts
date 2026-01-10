@@ -289,12 +289,12 @@ async function generateTitleFromPRs(prs : Array<string>,  pollactionsToken : str
         Embed the date naturally in the middle with a funny context.
         Adress the viewers in a cazual genz way!
         Use the name "pollinations.ai" strictly (case sensitive).
-        Give a context of the full thing in a descriptive way.
+        Describe the PRs in short (not the internal or sensitive ones) but NOT in a technical context, make it so that everyone can understand it.
         No markdown formatting remove any ** or backticks or [] () of markdown
         Create a FOMO effect and ask them to register at https://enter.pollinations.ai for easy AI features access.
-        Describe the new merged features from the PR summary in a catchy way.
         `;
-        const userPrompt = `Generate a Reddit description for this dev update from  the following pull requests without any markdown formatting just plain text${dateString}:${prs}`;
+        const userPrompt = `Generate a Reddit description for this dev update from  the following pull requests without any markdown formatting just plain text (use the max of the date not the date 24hrs prior) ${dateString}:${prs}`;
+
 
         const response = await fetch(POLLINATIONS_API, {
             method: 'POST',
