@@ -284,17 +284,17 @@ async function generateTitleFromPRs(prs : Array<string>,  pollactionsToken : str
         - Keep the internal dev PR information private
         - No dates except the one provided
         - No more than 30 words
-        - No markdown formatting remove any ** or backticks or [] () of markdown
         Output:
         Only one title you can use around 20-30 words. Nothing else.
         Embed the date naturally in the middle with a funny context.
         Adress the viewers in a cazual genz way!
         Use the name "pollinations.ai" strictly (case sensitive).
         Give a context of the full thing in a descriptive way.
-        Create a FOMO effect and ask them to register at enter.pollinations.ai for easy AI features access.
+        No markdown formatting remove any ** or backticks or [] () of markdown
+        Create a FOMO effect and ask them to register at https://enter.pollinations.ai for easy AI features access.
         Describe the new merged features from the PR summary in a catchy way.
         `;
-        const userPrompt = `Generate a Reddit description for this dev update from  the following pull requests ${dateString}:${prs}`;
+        const userPrompt = `Generate a Reddit description for this dev update from  the following pull requests without any markdown formatting just plain text${dateString}:${prs}`;
 
         const response = await fetch(POLLINATIONS_API, {
             method: 'POST',
@@ -324,14 +324,14 @@ async function generateTitleFromPRs(prs : Array<string>,  pollactionsToken : str
         title = title.replace(/^["']|["']$/g, '').trim();
         
         if (!title || title.length < 5) {
-            title = `Pollinations: New AI Powers Unlock ${dateFormatted} - Register at enter.pollinations.ai for Early Access`;
+            title = `Pollinations: New AI Powers Unlock ${dateFormatted} - Register at https://enter.pollinations.ai for Early Access`;
         }
 
         return title;
     } catch (error) {
         console.error('PR title generation failed:', (error as any).message);
         const dateFormatted = dateString ? `[${dateString}]` : '';
-        return `Pollinations: What's New in AI? ${dateFormatted} - Build, Share, Get Featured at enter.pollinations.ai`;
+        return `Pollinations: What's New in AI? ${dateFormatted} - Build, Share, Get Featured at https://enter.pollinations.ai`;
     }
 }
 
