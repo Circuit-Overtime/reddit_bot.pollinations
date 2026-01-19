@@ -143,43 +143,61 @@ export function getRandomCaptionHook(): string {
     return theme.captionHooks[randomIndex];
 }
 
-export function buildThemedImagePrompt(basePRList: string): string {
+export function buildThemedImagePrompt(prSummary: string, prObjects?: any[]): string {
     const theme = getCurrentTheme();
     const elementsStr = theme.visualElements.slice(0, 5).join(', ');
     const colorsStr = theme.colorPalette.join(', ');
     
-    // Extract key changes from PR list for visual representation
-    const changeCount = (basePRList.match(/\n/g) || []).length + 1;
-    const changeCategories = basePRList.includes('feature') ? 'feature-rich' : 
-                           basePRList.includes('fix') ? 'refined' :
-                           basePRList.includes('performance') ? 'optimized' :
-                           basePRList.includes('infrastructure') ? 'strengthened' :
-                           'evolved';
+    // Build a detailed description of what changed
+    let changeDescription = '';
+    if (prObjects && prObjects.length > 0) {
+        const categories: Record<string, string[]> = {
+            'feature': [],
+            'fix': [],
+            'docs': [],
+            'perf': [],
+            'other': []
+        };
+        
+        prObjects.forEach(pr => {
+            const title = pr.title.toLowerCase();
+            if (title.includes('feat') || title.includes('add')) categories['feature'].push(pr.title);
+            else if (title.includes('fix') || title.includes('bug')) categories['fix'].push(pr.title);
+            else if (title.includes('docs')) categories['docs'].push(pr.title);
+            else if (title.includes('perf') || title.includes('optim')) categories['perf'].push(pr.title);
+            else categories['other'].push(pr.title);
+        });
+        
+        changeDescription = `\nCHANGES MADE:`;
+        if (categories['feature'].length > 0) changeDescription += `\nNew Features: ${categories['feature'].slice(0, 2).join(', ')}`;
+        if (categories['fix'].length > 0) changeDescription += `\nBug Fixes: ${categories['fix'].slice(0, 2).join(', ')}`;
+
+        if (categories['perf'].length > 0) changeDescription += `\nPerformance: ${categories['perf'].slice(0, 2).join(', ')}`;
+        if (categories['docs'].length > 0) changeDescription += `\nDocumentation: ${categories['docs'].join(', ')}`;
+    }
 
     return `${theme.promptPrefix}
 
-VISUAL COMPRESSION REQUIREMENTS:
-- Condense ALL these changes into ONE unified natural landscape: ${changeCount} updates across ${changeCategories} areas
-- Each change becomes a subtle visual layer in the ecosystem (roots for infrastructure, blooms for features, water flow for data)
-- Show progression/growth from left to right or center outward
-- Stack complexity naturally: foundation → growth → flourishing
+WHAT ACTUALLY CHANGED (these are REAL updates):
+${prSummary}${changeDescription}
 
-CHANGES SUMMARY (abstract into natural elements):
-${basePRList}
+VISUALIZATION REQUIREMENTS:
+- Create an image that SHOWS the actual improvements and growth made
+- Each change becomes a visual layer: new features as new blooms, fixes as strengthened roots, performance improvements as flowing energy
+- Show BEFORE and AFTER conceptually (foundation strengthened → improvements flowing)
+- Make it clear this represents TECHNICAL PROGRESS and PRODUCT EVOLUTION
 
-COMPOSITION INSTRUCTIONS:
-- Watercolor texture, layered soft washes
-- Root systems represent infrastructure changes
-- Blooms/flowers for new features
-- Flowing water/sap for performance & data improvements
-- Interconnected pathways show integration & connectivity
-- All elements naturally coexist in one harmonious scene
+COMPOSITION:
+- Watercolor with flowing movement showing growth and improvement
+- Central focus: ecosystem thriving with changes applied
+- Flow from left to right: foundation → active changes → flourishing results
+- All changes visible as integrated improvements in one harmonious scene
 
 Visual palette: ${elementsStr}
 Colors: ${colorsStr}
-Aesthetic: ${theme.imageStyle}
+Style: ${theme.imageStyle}
 
-Output ONE concise image prompt (2-3 sentences). Make it visually represent the DENSITY and SCOPE of all changes condensed into serene natural evolution. ONLY output the image prompt.`;
+Generate ONE concise image prompt (2-3 sentences max) that visually represents these SPECIFIC changes. ONLY output the image prompt.`;
 }
 
 export function buildThemedCaption(generatedTitle: string): string {
@@ -203,3 +221,4 @@ export function getThemeSummary(): string {
 ✨ Elements: ${theme.visualElements.join(', ')}
     `.trim();
 }
+

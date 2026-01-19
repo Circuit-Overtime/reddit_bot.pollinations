@@ -170,11 +170,20 @@ async function createImagePrompt(prs : any[], dateString: string, pollinationsTo
         };
     }
 
-    const prList = prs.slice(0, 10).map(pr => pr.title).join(', ');
     const theme = getCurrentTheme();
+    const prDetails = prs.slice(0, 10).map(pr => {
+        const label = pr.labels?.length > 0 ? pr.labels[0] : 'update';
+        return `${pr.title} (${label})`;
+    }).join(' | ');
     
-    const systemPrompt = `Output SHORT image prompt (2-3 sentences). Theme style: ${theme.imageStyle}. Using visual elements: ${theme.visualElements.slice(0, 3).join(', ')}. Color palette: ${theme.colorPalette.join(', ')}. Dynamic energy and motion. Strip all dates, counts, metrics. ONLY output the image prompt.`;
-    const userPrompt = buildThemedImagePrompt(prList);
+    const systemPrompt = `You are creating a visual summary of software updates. Create a SHORT image prompt (2-3 sentences) that visually represents the ACTUAL CHANGES described. 
+    Theme style: ${theme.imageStyle}
+    Visual elements to use: ${theme.visualElements.slice(0, 3).join(', ')}
+    Color palette: ${theme.colorPalette.join(', ')}
+    
+    Your prompt must visually communicate what these changes DO, not be generic. Show growth, improvement, technical advancement.
+    Output ONLY the image prompt, no markdown, no extra text.`;
+    const userPrompt = buildThemedImagePrompt(prDetails, prs.slice(0, 10));
 
     try {
         console.log('Generating merged prompt using Pollinations API...');
@@ -278,37 +287,37 @@ Write in pure plain text, no metadata or extra commentary or markdown`;
     }
 }
 
-async function generateTitleFromPRs(prs : Array<string>,  pollinationsToken : string, dateString: string = '') {
+async function generateTitleFromPRs(prs : any[],  pollinationsToken : string, dateString: string = '') {
     try {
         const todayDate = getTodayDate();
-        const theme = getCurrentTheme();
         
-        const systemPrompt = `
-        You generate catchy titles for engineers and open-source builders.
-        Theme: ${theme.name}
-        Caption tone: ${theme.captionTone}
-        Voice:
+        const prSummary = prs.slice(0, 5).map(pr => {
+            const label = Array.isArray(pr.labels) ? pr.labels[0] : 'update';
+            return `${pr.title} (${label})`;
+        }).join(' • ');
+        
+        const systemPrompt = `You generate catchy, technical titles that showcase ACTUAL PRODUCT CHANGES for dev communities.
+        
+        Your voice:
         - Hacker, insider, dev-to-dev
-        - Playful, confident, slightly chaotic
+        - Playful, confident, insider knowledge
         - Internet-native humor
-        - Zero corporate or marketing tone
-        - No emojis
-        - No markdown formatting remove any ** or backticks or [] () of markdown
-        - Don't pick any internal information about the PRs
-        Constraints:
-        - Keep the internal dev PR information private
-        - Use today's date: ${todayDate}
-        - No more than 30 words
-        Output:
-        Only one title you can use around 20-30 words. Nothing else.
-        Embed the date ${todayDate} naturally in the middle with a funny context.
-        Address the viewers in a casual genz way!
-        Use the name "pollinations.ai" strictly (case sensitive).
-        Describe the PRs in short (not the internal or sensitive ones) but NOT in a technical context, make it so that everyone can understand it.
-        No markdown formatting remove any ** or backticks or [] () of markdown
-        Create a FOMO effect and ask them to register at https://enter.pollinations.ai for easy AI features access.
+        - Zero corporate tone
+        - No emojis, no markdown
+        - Highlight what ACTUALLY CHANGED and why it matters
+        
+        Guidelines:
+        - Lead with the TECHNICAL CHANGES (features, fixes, improvements)
+        - Use today's date ${todayDate} naturally in the middle
+        - Address viewers in casual, genz way
+        - Create FOMO: what's new is actually useful
+        - Include: "pollinations.ai" (case sensitive)
+        - End with: "Register at https://enter.pollinations.ai for AI features access"
+        - 25-35 words max
+        - No markdown formatting
+        - DO NOT mention day names or generic theme words
         `;
-        const userPrompt = `Generate a Reddit description for this dev update from the following pull requests without any markdown formatting just plain text with today's date ${todayDate}:${prs}`;
+        const userPrompt = `Create a Reddit post title showcasing these ACTUAL pollinations.ai updates from ${todayDate}:\n${prSummary}\n\nMake it technical but accessible. Showcase the real improvements made.`;
 
 
         const response = await fetch(POLLINATIONS_API, {
@@ -405,7 +414,7 @@ async function pipeline(githubToken : string, pollinationsToken : string) {
         console.log('\n');
 
 
-        const postTitle = await generateTitleFromPRs(prs.map(p => p.title), pollinationsToken, dateString);
+        const postTitle = await generateTitleFromPRs(prs, pollinationsToken, dateString);
         console.log('=== Generated Post Title (Themed) ===');
         console.log(postTitle);
         console.log('\n');
