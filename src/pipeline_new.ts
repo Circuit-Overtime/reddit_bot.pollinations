@@ -1,5 +1,5 @@
-import { privateEncrypt } from 'crypto';
 import dotenv from 'dotenv';
+import { buildThemedImagePrompt, getCurrentTheme, getThemeSummary } from './themes.js';
 dotenv.config();
 
 const POLLINATIONS_IMAGE_API = 'https://gen.pollinations.ai/image';
@@ -26,6 +26,14 @@ function getPreviousDayRange() {
         startDate,
         endDate,
     };
+}
+
+function getTodayDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
 }
 
 async function getMergedPRsFromPreviousDay(owner : any = 'pollinations', repo : any = 'pollinations', githubToken : string) {
@@ -152,7 +160,7 @@ async function getMergedPRsFromPreviousDay(owner : any = 'pollinations', repo : 
     return { prs: allPRs, dateString };
 }
 
-async function createImagePrompt(prs : any[], dateString: string, pollactionsToken : string) {
+async function createImagePrompt(prs : any[], dateString: string, pollinationsToken : string) {
     if (!prs || prs.length === 0) {
         return {
             prompt: 'Pollinations: A free, open-source AI image generation platform with community updates',
@@ -162,11 +170,20 @@ async function createImagePrompt(prs : any[], dateString: string, pollactionsTok
         };
     }
 
-    const prList = prs.slice(0, 10).map(pr => pr.title).join(', ');
-
-    const systemPrompt = `Output SHORT image prompt (2-3 sentences). Create nature-themed comic flowchart with updates as distinct natural elements (flowers, trees, creatures, vines). Bug fixes=pruned branches, Features=blooming flowers, Refactors=reorganized paths, Infrastructure=nesting animals. Bright comic style: emerald, golden, sky blue, orange, purple. Dynamic energy: wind, pollen, water, bee flight paths. Strip all dates, counts, metrics. ONLY output the image prompt.`
-    const userPrompt = `Nature-themed comic flowchart: ${prList}
-    Short prompt only. No dates, counts, metadata.`
+    const theme = getCurrentTheme();
+    const prDetails = prs.slice(0, 10).map(pr => {
+        const label = pr.labels?.length > 0 ? pr.labels[0] : 'update';
+        return `${pr.title} (${label})`;
+    }).join(' | ');
+    
+    const systemPrompt = `You are creating a visual summary of software updates. Create a SHORT image prompt (2-3 sentences) that visually represents the ACTUAL CHANGES described. 
+    Theme style: ${theme.imageStyle}
+    Visual elements to use: ${theme.visualElements.slice(0, 3).join(', ')}
+    Color palette: ${theme.colorPalette.join(', ')}
+    
+    Your prompt must visually communicate what these changes DO, not be generic. Show growth, improvement, technical advancement.
+    Output ONLY the image prompt, no markdown, no extra text.`;
+    const userPrompt = buildThemedImagePrompt(prDetails, prs.slice(0, 10));
 
     try {
         console.log('Generating merged prompt using Pollinations API...');
@@ -175,7 +192,7 @@ async function createImagePrompt(prs : any[], dateString: string, pollactionsTok
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${pollactionsToken}`,
+                'Authorization': `Bearer ${pollinationsToken}`,
             },
             body: JSON.stringify({
                 model: 'gemini-fast',
@@ -239,9 +256,12 @@ ${highlights.map(h => `• ${h}`).join('\n')}
         console.warn(`Prompt generation failed: ${(error as any).message}`);
         console.log('Falling back to local prompt generation...\n');
 
-        const comicPrompt = `Comic book style illustration celebrating ${prs.length} Pollinations updates:
+        const theme = getCurrentTheme();
+        const comicPrompt = `${theme.imageStyle} illustration celebrating ${prs.length} Pollinations updates:
 ${prs.slice(0, 5).map(p => p.title).join(', ')}.
-Dynamic composition with bees pollinating code flowers, bright colors, retro comic aesthetic.
+Visual elements: ${theme.visualElements.slice(0, 3).join(', ')}.
+Colors: ${theme.colorPalette.join(', ')}.
+Dynamic composition with ${theme.visualElements[0]}, bright colors, ${theme.name} aesthetic.
 Write in pure plain text, no metadata or extra commentary or markdown`;
 
         const highlights = prs
@@ -267,40 +287,48 @@ Write in pure plain text, no metadata or extra commentary or markdown`;
     }
 }
 
-async function generateTitleFromPRs(prs : Array<string>,  pollactionsToken : string, dateString: string = '') {
+async function generateTitleFromPRs(prs : any[],  pollinationsToken : string, dateString: string = '') {
     try {
-        const dateFormatted = dateString ? `[${dateString}]` : '';
-        const systemPrompt = `
-        You generate catchy titles for engineers and open-source builders.
-        Voice:
-        - Hacker, insider, dev-to-dev
-        - Playful, confident, slightly chaotic
-        - Internet-native humor
-        - Zero corporate or marketing tone
-        - No emojis
-        - No markdown formatting remove any ** or backticks or [] () of markdown
-        - Don't pick any internal information about the PRs
+        const todayDate = getTodayDate();
+        
+        const prSummary = prs.slice(0, 5).map(pr => {
+            const label = Array.isArray(pr.labels) ? pr.labels[0] : 'update';
+            return `${pr.title} (${label})`;
+        }).join(' • ');
+        
+        const systemPrompt = `You're telling a story to your community family about what you've been building together. This is a personal update, not marketing.
+        
+        Your voice and approach:
+        - Talk TO them, not AT them - they're family
+        - Share what you built and why it matters
+        - Be genuine, playful, insider knowledge
+        - Show excitement for what came together
+        - Use casual genz/hacker language, internet-native humor
+        - No corporate-speak, no emojis, no markdown
+        
+        Story structure:
+        - Open with what you shipped (the story)
+        - Show the impact or why it's cool
+        - Naturally weave in today's date: ${todayDate}
+        - Make them feel like they're part of the journey
+        - Close with: "Come build with us at https://enter.pollinations.ai"
+        - Make it feel like an invitation to family, not a sales pitch
+        
         Constraints:
-        - Keep the internal dev PR information private
-        - No dates except the one provided
-        - No more than 30 words
-        Output:
-        Only one title you can use around 20-30 words. Nothing else.
-        Embed the date naturally in the middle with a funny context.
-        Adress the viewers in a cazual genz way!
-        Use the name "pollinations.ai" strictly (case sensitive).
-        Describe the PRs in short (not the internal or sensitive ones) but NOT in a technical context, make it so that everyone can understand it.
-        No markdown formatting remove any ** or backticks or [] () of markdown
-        Create a FOMO effect and ask them to register at https://enter.pollinations.ai for easy AI features access.
+        - 30-40 words max (give them the real story)
+        - Include "pollinations.ai" (case sensitive)
+        - No markdown formatting
+        - DO NOT mention day names
+        - Speak like you're excited to share what happened with people you care about
         `;
-        const userPrompt = `Generate a Reddit description for this dev update from  the following pull requests without any markdown formatting just plain text (use the max of the date not the date 24hrs prior) ${dateString}:${prs}`;
+        const userPrompt = `Tell our community family what we shipped today (${todayDate}). These are the updates:\n${prSummary}\n\nMake them feel like they're part of our story. Invite them to build with us.`;
 
 
         const response = await fetch(POLLINATIONS_API, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${pollactionsToken}`,
+                'Authorization': `Bearer ${pollinationsToken}`,
             },
             body: JSON.stringify({
                 model: 'gemini-fast',
@@ -324,18 +352,18 @@ async function generateTitleFromPRs(prs : Array<string>,  pollactionsToken : str
         title = title.replace(/^["']|["']$/g, '').trim();
         
         if (!title || title.length < 5) {
-            title = `Pollinations: New AI Powers Unlock ${dateFormatted} - Register at https://enter.pollinations.ai for Early Access`;
+            title = `Pollinations: New AI Powers Unlock ${todayDate} - Register at https://enter.pollinations.ai for Early Access`;
         }
 
         return title;
     } catch (error) {
         console.error('PR title generation failed:', (error as any).message);
-        const dateFormatted = dateString ? `[${dateString}]` : '';
-        return `Pollinations: What's New in AI? ${dateFormatted} - Build, Share, Get Featured at https://enter.pollinations.ai`;
+        const todayDate = getTodayDate();
+        return `Pollinations: What's New in AI? ${todayDate} - Build, Share, Get Featured at https://enter.pollinations.ai`;
     }
 }
 
-async function generateImage(prompt : string, pollactionsToken : string, attempt = 0) {
+async function generateImage(prompt : string, pollinationsToken : string, attempt = 0) {
     if (attempt > 0) {
         const delay = INITIAL_RETRY_DELAY * Math.pow(2, attempt - 1);
         console.log(`  Retrying in ${delay}s... (attempt ${attempt + 1}/${MAX_RETRIES})`);
@@ -347,7 +375,7 @@ async function generateImage(prompt : string, pollactionsToken : string, attempt
         const response = await fetch(URL, {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${pollactionsToken}`,
+                'Authorization': `Bearer ${pollinationsToken}`,
             },
             signal: AbortSignal.timeout(120000),
         });
@@ -363,14 +391,19 @@ async function generateImage(prompt : string, pollactionsToken : string, attempt
     } catch (error) {
         if (attempt < MAX_RETRIES - 1) {
             console.log(`  ✗ Attempt ${attempt + 1} failed: ${(error as any).message}`);
-            return generateImage(prompt, pollactionsToken, attempt + 1);
+            return generateImage(prompt, pollinationsToken, attempt + 1);
         }
         throw error;
     }
 }
 
-async function pipeline(githubToken : string, pollactionsToken : string) {
+async function pipeline(githubToken : string, pollinationsToken : string) {
     try {
+        const theme = getCurrentTheme();
+        console.log('\n🎨 Daily Theme Configuration:');
+        console.log(getThemeSummary());
+        console.log('\n');
+        
         const result = await getMergedPRsFromPreviousDay('pollinations', 'pollinations', githubToken);
         
         if (!result || !result.prs || result.prs.length === 0) {
@@ -379,20 +412,19 @@ async function pipeline(githubToken : string, pollactionsToken : string) {
         }
         
         const { prs, dateString } = result;
-        const promptData = await createImagePrompt(prs, dateString, pollactionsToken);
-        console.log(prs)
-        console.log('\n=== Generated Image Prompt ===');
+        const promptData = await createImagePrompt(prs, dateString, pollinationsToken);
+        console.log('\n=== Generated Image Prompt (Themed) ===');
         console.log(promptData.prompt);
         console.log('\n');
 
 
-        const postTitle = await generateTitleFromPRs(prs.map(p => p.title), pollactionsToken, dateString);
-        console.log('=== Generated Post Title ===');
+        const postTitle = await generateTitleFromPRs(prs, pollinationsToken, dateString);
+        console.log('=== Generated Post Title (Themed) ===');
         console.log(postTitle);
         console.log('\n');
         
         
-        const imageData = await generateImage(promptData.prompt, pollactionsToken);
+        const imageData = await generateImage(promptData.prompt, pollinationsToken);
         console.log('=== Generated Image URL ===');
         console.log(imageData.url);
         console.log('\n');
