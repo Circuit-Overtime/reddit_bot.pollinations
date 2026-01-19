@@ -17,25 +17,25 @@ const SOOTHING_ELEMENTS = ['flowing vines', 'blooming flowers', 'interconnected 
 
 // Dynamic style variations for each day
 const MONDAY_STYLE = 'Energetic watercolor with vibrant sunrise hues, explosive growth patterns, blooming flowers bursting with energy, dynamic light rays piercing through morning mist';
-const MONDAY_COLORS = ['sunrise orange', 'electric lime', 'sky blue', 'golden yellow', 'deep green'];
+const MONDAY_COLORS = ['sunrise orange', 'warm gold', 'sky blue', 'soft yellow', 'forest green'];
 
 const TUESDAY_STYLE = 'Detailed technical nature illustration with intricate root networks, neural-like patterns in tree branches, data streams flowing like water, precision meets organic beauty';
-const TUESDAY_COLORS = ['deep forest green', 'electric blue', 'silver', 'gold', 'emerald'];
+const TUESDAY_COLORS = ['deep forest green', 'slate blue', 'bronze gold', 'silver-grey', 'emerald'];
 
 const WEDNESDAY_STYLE = 'Surreal, dreamlike nature art with impossible plants, morphing flowers, fractals in nature, experimental colors blending organically, creative mutations of reality';
-const WEDNESDAY_COLORS = ['magenta', 'deep purple', 'turquoise', 'acid green', 'copper'];
+const WEDNESDAY_COLORS = ['sage purple', 'dusty rose', 'forest teal', 'soft sage green', 'copper bronze'];
 
 const THURSDAY_STYLE = 'Interconnected ecosystem illustration showing symbiosis, pollination cycles in motion, creatures collaborating, intricate networks pulsing with life, harmonious complexity';
-const THURSDAY_COLORS = ['coral pink', 'teal blue', 'lime green', 'warm gold', 'plum purple'];
+const THURSDAY_COLORS = ['coral peach', 'teal blue', 'sage green', 'golden orange', 'plum purple'];
 
 const FRIDAY_STYLE = 'Celebratory nature burst with peak blooms, overflowing abundance, radiant colors at peak saturation, fireworks of flowers, triumphant growth captured mid-flourish';
-const FRIDAY_COLORS = ['vibrant pink', 'sunset orange', 'golden yellow', 'hot pink', 'lime green'];
+const FRIDAY_COLORS = ['sunset orange', 'peachy pink', 'golden yellow', 'coral rose', 'olive green'];
 
 const SATURDAY_STYLE = 'Handcrafted garden aesthetic with visible brushstrokes, textured soil, carefully arranged plants, human-scale beauty, warm intimate cultivation captured with care';
 const SATURDAY_COLORS = ['earthy brown', 'sage green', 'rust orange', 'warm taupe', 'deep green'];
 
 const SUNDAY_STYLE = 'Cosmic nature vista showing complete cycles, panoramic ecosystem view, all seasons visible simultaneously, convergence of all changes into one harmonious symphony';
-const SUNDAY_COLORS = ['midnight blue', 'silver white', 'aurora green', 'cosmic purple', 'starlight gold'];
+const SUNDAY_COLORS = ['midnight blue', 'silver white', 'aurora green', 'soft indigo', 'warm gold'];
 
 export const themes: Record<DayOfWeek, Theme> = {
     monday: {
@@ -146,7 +146,7 @@ export const themes: Record<DayOfWeek, Theme> = {
 
 export function getCurrentDayOfWeek(): DayOfWeek {
     const day = new Date().getDay();
-    const days: DayOfWeek[] = ["wednesday", "wednesday", "wednesday", "wednesday", "wednesday", "wednesday", "wednesday"]
+    const days: DayOfWeek[] = ["sunday", "sunday", "sunday", "sunday", "sunday", "sunday", "sunday"];
 
 
     return days[day];
@@ -175,6 +175,7 @@ export function buildThemedImagePrompt(prSummary: string, prObjects?: any[]): st
     // Build detailed visual metaphors for each change category
     let visualMapping = '';
     let changeCount = 0;
+    let textOverlay = '';
     
     if (prObjects && prObjects.length > 0) {
         const categories: Record<string, { items: string[], visual: string, description: string }> = {
@@ -216,17 +217,28 @@ export function buildThemedImagePrompt(prSummary: string, prObjects?: any[]): st
         });
         
         visualMapping = `\nVISUAL MAP OF CHANGES (each element represents real updates):`;
+        let textItems: string[] = [];
         Object.entries(categories).forEach(([key, cat]) => {
             if (cat.items.length > 0) {
                 visualMapping += `\n• ${cat.visual} - ${cat.items.slice(0, 2).join(', ')}. Show as: ${cat.description}`;
+                textItems.push(cat.items.slice(0, 1)[0]);
             }
         });
+        
+        textOverlay = `\nTEXT OVERLAY - Add these change labels directly on the image:
+- Blend text seamlessly into the composition (not bold banner, but integrated)
+- Use elegant, flowing typography that matches the nature aesthetic
+- Place text labels near their corresponding visual elements
+- Use semi-transparent or blended text so it feels part of the artwork
+- Key changes to display: ${textItems.slice(0, 3).join(' • ')}
+- Make text glow subtly with colors from the palette: ${colorsStr}
+- The text should tell the story: what we built, fixed, and improved`;
     }
 
     return `${theme.promptPrefix}
 
 THESE ARE THE REAL CHANGES SHIPPED (${changeCount} updates):
-${prSummary}${visualMapping}
+${prSummary}${visualMapping}${textOverlay}
 
 YOUR TASK - Create an image where these SPECIFIC changes are VISUALLY CLEAR:
 - This is not generic growth - show the ACTUAL improvements we made
@@ -241,13 +253,14 @@ COMPOSITION INSTRUCTIONS:
 - Make the changes PROMINENT - they are the stars of this image, not background details
 
 Color strategy:
-- Use ${colorsStr} to make different change types visually distinct
+- ONLY use nature-inspired colors from this palette: ${colorsStr}
+- Make different change types visually distinct through color and visual metaphor
 - Ensure the viewer's eye is drawn to the specific improvements
 - Create contrast so changes POP against the background
 
 Style: ${theme.imageStyle}
 
-Generate ONE concise image prompt (2-3 sentences max) that an AI image generator can execute to create an image where our SPECIFIC CHANGES are the focal point. ONLY output the image prompt, nothing else.`;
+Generate ONE concise image prompt (2-3 sentences max) that an AI image generator can execute to create an image where our SPECIFIC CHANGES are the focal point with stylish integrated text. ONLY output the image prompt, nothing else.`;
 }
 
 export function buildThemedCaption(generatedTitle: string): string {
