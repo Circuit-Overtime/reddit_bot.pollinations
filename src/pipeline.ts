@@ -1,6 +1,5 @@
-import { privateEncrypt } from 'crypto';
 import dotenv from 'dotenv';
-import { buildThemedImagePrompt, buildThemedCaption, getCurrentTheme, getThemeSummary } from './themes.js';
+import { buildThemedImagePrompt, getCurrentTheme, getThemeSummary } from './themes.js';
 dotenv.config();
 
 const POLLINATIONS_IMAGE_API = 'https://gen.pollinations.ai/image';
@@ -27,6 +26,14 @@ function getPreviousDayRange() {
         startDate,
         endDate,
     };
+}
+
+function getTodayDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
 }
 
 async function getMergedPRsFromPreviousDay(owner : any = 'pollinations', repo : any = 'pollinations', githubToken : string) {
@@ -166,7 +173,6 @@ async function createImagePrompt(prs : any[], dateString: string, pollactionsTok
     const prList = prs.slice(0, 10).map(pr => pr.title).join(', ');
     const theme = getCurrentTheme();
     
-    // Use themed prompt prefix instead of hardcoded nature theme
     const systemPrompt = `Output SHORT image prompt (2-3 sentences). Theme style: ${theme.imageStyle}. Using visual elements: ${theme.visualElements.slice(0, 3).join(', ')}. Color palette: ${theme.colorPalette.join(', ')}. Dynamic energy and motion. Strip all dates, counts, metrics. ONLY output the image prompt.`;
     const userPrompt = buildThemedImagePrompt(prList);
 
@@ -274,7 +280,7 @@ Write in pure plain text, no metadata or extra commentary or markdown`;
 
 async function generateTitleFromPRs(prs : Array<string>,  pollactionsToken : string, dateString: string = '') {
     try {
-        const dateFormatted = dateString ? `[${dateString}]` : '';
+        const todayDate = getTodayDate();
         const theme = getCurrentTheme();
         
         const systemPrompt = `
@@ -291,18 +297,18 @@ async function generateTitleFromPRs(prs : Array<string>,  pollactionsToken : str
         - Don't pick any internal information about the PRs
         Constraints:
         - Keep the internal dev PR information private
-        - No dates except the one provided
+        - Use today's date: ${todayDate}
         - No more than 30 words
         Output:
         Only one title you can use around 20-30 words. Nothing else.
-        Embed the date naturally in the middle with a funny context.
+        Embed the date ${todayDate} naturally in the middle with a funny context.
         Address the viewers in a casual genz way!
         Use the name "pollinations.ai" strictly (case sensitive).
         Describe the PRs in short (not the internal or sensitive ones) but NOT in a technical context, make it so that everyone can understand it.
         No markdown formatting remove any ** or backticks or [] () of markdown
         Create a FOMO effect and ask them to register at https://enter.pollinations.ai for easy AI features access.
         `;
-        const userPrompt = `Generate a Reddit description for this dev update from  the following pull requests without any markdown formatting just plain text (use the max of the date not the date 24hrs prior) ${dateString}:${prs}`;
+        const userPrompt = `Generate a Reddit description for this dev update from the following pull requests without any markdown formatting just plain text with today's date ${todayDate}:${prs}`;
 
 
         const response = await fetch(POLLINATIONS_API, {
@@ -333,14 +339,14 @@ async function generateTitleFromPRs(prs : Array<string>,  pollactionsToken : str
         title = title.replace(/^["']|["']$/g, '').trim();
         
         if (!title || title.length < 5) {
-            title = `Pollinations: New AI Powers Unlock ${dateFormatted} - Register at https://enter.pollinations.ai for Early Access`;
+            title = `Pollinations: New AI Powers Unlock ${todayDate} - Register at https://enter.pollinations.ai for Early Access`;
         }
 
         return title;
     } catch (error) {
         console.error('PR title generation failed:', (error as any).message);
-        const dateFormatted = dateString ? `[${dateString}]` : '';
-        return `Pollinations: What's New in AI? ${dateFormatted} - Build, Share, Get Featured at https://enter.pollinations.ai`;
+        const todayDate = getTodayDate();
+        return `Pollinations: What's New in AI? ${todayDate} - Build, Share, Get Featured at https://enter.pollinations.ai`;
     }
 }
 
@@ -437,4 +443,3 @@ export {LINK, TITLE};
 fs.writeFileSync(linkTsPath, updatedLinkTs, 'utf-8');
 console.log('\n✓ link.ts updated successfully');
 })();
-
