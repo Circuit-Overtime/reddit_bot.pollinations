@@ -10,109 +10,114 @@ export interface Theme {
     captionHooks: string[];
 }
 
+// Base soothing nature aesthetic - consistent across all days, aligned with Pollinations identity
+const SOOTHING_BASE_STYLE = 'Soothing watercolor-inspired nature composition with flowing organic elements, soft gradients, serene ecosystem harmony. Gentle visual documentation of interconnected growth and evolution.';
+const SOOTHING_COLORS = ['soft sage green', 'warm cream', 'sky blue', 'gentle gold', 'muted terracotta'];
+const SOOTHING_ELEMENTS = ['flowing vines', 'blooming flowers', 'interconnected roots', 'gentle light rays', 'organic growth patterns', 'ecosystem balance'];
+
 export const themes: Record<DayOfWeek, Theme> = {
     monday: {
-        name: 'Motivation Monday',
-        imageStyle: 'Epic cinematic illustration with dramatic lighting, heroic composition',
+        name: 'Momentum Monday',
+        imageStyle: SOOTHING_BASE_STYLE,
         captionTone: 'Inspirational, energetic, motivating developers to build',
-        visualElements: ['ascending mountains', 'breakthrough moments', 'lightning strikes', 'rising sun', 'breaking chains'],
-        colorPalette: ['deep purple', 'gold', 'bright orange', 'electric blue'],
-        promptPrefix: 'Epic cinematic comic book style artwork celebrating Monday momentum:',
+        visualElements: [...SOOTHING_ELEMENTS, 'morning growth', 'fresh beginnings'],
+        colorPalette: SOOTHING_COLORS,
+        promptPrefix: 'Soothing nature illustration capturing this week\'s momentum and growth:',
         captionHooks: [
-            'Week starts strong with these AI breakthroughs',
-            'Fresh week energy: check out what shipped',
-            'Monday fuel: incredible updates to power your builds',
-            'Week unlocked: see what the team deployed',
+            'Week sprouts: check out what\'s growing',
+            'Fresh growth energy in these updates',
+            'Monday blooms: incredible cultivations this week',
+            'Seeds planted: see what took root',
         ],
     },
 
     tuesday: {
         name: 'Technical Tuesday',
-        imageStyle: 'Detailed technical diagram meets abstract data visualization, futuristic aesthetic',
-        captionTone: 'Technical depth, builder-focused, performance-oriented',
-        visualElements: ['code streams', 'data flows', 'neural networks', 'circuit patterns', 'quantum particles'],
-        colorPalette: ['neon green', 'cyan', 'dark blue', 'silver'],
-        promptPrefix: 'Technical futuristic illustration with data visualization showing the week\'s updates:',
+        imageStyle: SOOTHING_BASE_STYLE,
+        captionTone: 'Technical depth, builder-focused, nature-informed systems',
+        visualElements: [...SOOTHING_ELEMENTS, 'neural networks', 'data flows in nature'],
+        colorPalette: SOOTHING_COLORS,
+        promptPrefix: 'Soothing nature-inspired illustration showing the technical architecture and systems evolved:',
         captionHooks: [
-            'Tech deep dive: here\'s what got optimized',
-            'Performance gains unlocked this week',
-            'Technical mastery: new capabilities shipped',
-            'Code quality surge detected',
+            'Roots deepen: technical foundations strengthened',
+            'System harmony: infrastructure cultivated this week',
+            'Architecture blooms: capability expansion detailed',
+            'Technical terroir: engineering excellence documented',
         ],
     },
 
     wednesday: {
         name: 'Creative Wednesday',
-        imageStyle: 'Psychedelic surreal abstract art, dreamlike patterns, flowing organic shapes',
-        captionTone: 'Creative, imaginative, experimental vibes',
-        visualElements: ['morphing shapes', 'kaleidoscope patterns', 'flowing liquids', 'fractals', 'cosmic swirls'],
-        colorPalette: ['magenta', 'lime green', 'electric pink', 'holographic gold'],
-        promptPrefix: 'Surreal creative abstract artwork with psychedelic patterns representing innovation:',
+        imageStyle: SOOTHING_BASE_STYLE,
+        captionTone: 'Creative, imaginative, experimental yet soothing vibes',
+        visualElements: [...SOOTHING_ELEMENTS, 'creative mutations', 'experimental blooms'],
+        colorPalette: SOOTHING_COLORS,
+        promptPrefix: 'Soothing nature composition celebrating creative experiments and innovative evolution:',
         captionHooks: [
-            'Mid-week creativity: check out these inventive updates',
-            'Imagination unleashed: new features spark ideas',
-            'Creative breakthroughs in the making',
-            'Experimental updates changing the game',
+            'Mid-week metamorphosis: inventive updates flourish',
+            'Creative pollination: new ideas cross-breed',
+            'Experimental gardens: breakthrough features planted',
+            'Artistic cultivation: vision taking form',
         ],
     },
 
     thursday: {
-        name: 'Throwback Thursday',
-        imageStyle: 'Retro pixel art meets modern design, vaporwave aesthetic with nostalgic elements',
-        captionTone: 'Nostalgia meets future, builders looking back and forward',
-        visualElements: ['pixel art', 'vaporwave grids', 'retro computers', 'arcade vibes', 'analog meets digital'],
-        colorPalette: ['hot pink', 'cyan', 'purple', 'gold'],
-        promptPrefix: 'Retro vaporwave pixel art collage celebrating this week\'s building blocks:',
+        name: 'Ecosystem Thursday',
+        imageStyle: SOOTHING_BASE_STYLE,
+        captionTone: 'Integration-focused, community building, interconnected systems',
+        visualElements: [...SOOTHING_ELEMENTS, 'symbiotic relationships', 'interconnected networks', 'pollination cycles'],
+        colorPalette: SOOTHING_COLORS,
+        promptPrefix: 'Soothing nature illustration of interconnected ecosystem showing integrated systems and community pollination:',
         captionHooks: [
-            'Throwback to what\'s building the future',
-            'Retro vibes, future tech: this week\'s remix',
-            'From legacy to legend: updates that matter',
-            'Leveling up: classic meets cutting-edge',
+            'Ecosystem thrives: everything connects this week',
+            'Pollination in progress: ideas cross-breed beautifully',
+            'Community gardens: shared growth documented',
+            'Symbiosis perfected: collaborative wins this week',
         ],
     },
 
     friday: {
         name: 'Feature Friday',
-        imageStyle: 'Vibrant celebratory illustration with party energy, dynamic motion lines, confetti vibes',
-        captionTone: 'Celebratory, playful, party-ready, FOMO inducing',
-        visualElements: ['confetti explosions', 'celebration bubbles', 'fireworks', 'trophy moments', 'crowd energy'],
-        colorPalette: ['brilliant red', 'golden yellow', 'electric pink', 'turquoise'],
-        promptPrefix: 'Celebratory dynamic comic style illustration with party atmosphere featuring this week\'s wins:',
+        imageStyle: SOOTHING_BASE_STYLE,
+        captionTone: 'Celebratory yet serene, joyful achievements in nature context',
+        visualElements: [...SOOTHING_ELEMENTS, 'flourishing abundance', 'peak bloom moments'],
+        colorPalette: SOOTHING_COLORS,
+        promptPrefix: 'Soothing nature masterpiece celebrating the week\'s flourishing features and fruitful achievements:',
         captionHooks: [
-            'TGIF: here\'s what shipped this week 🎉',
-            'Feature drops that hit different',
-            'Win of the week: new powers unlocked',
-            'Friday flex: see what shipped',
+            'Week in full bloom: harvest of features shipped',
+            'Peak pollination: cross-breed successes documented',
+            'Fruition Friday: seeds grown into mighty trees',
+            'Abundance harvested: see what flourished',
         ],
     },
 
     saturday: {
         name: 'Builders Saturday',
-        imageStyle: 'DIY maker aesthetic, workshop environment, hands-on craftsmanship, hackathon energy',
-        captionTone: 'Community-focused, builder-powered, grassroots energy',
-        visualElements: ['maker tools', 'workshop benches', 'building blocks', 'collaborative energy', 'prototype iterations'],
-        colorPalette: ['warm rust', 'wood brown', 'forest green', 'cream'],
-        promptPrefix: 'Workshop maker aesthetic illustration celebrating the builders and their creations:',
+        imageStyle: SOOTHING_BASE_STYLE,
+        captionTone: 'Community-focused, hands-on cultivation, gardener energy',
+        visualElements: [...SOOTHING_ELEMENTS, 'careful cultivation', 'gardener\'s work', 'tended gardens'],
+        colorPalette: SOOTHING_COLORS,
+        promptPrefix: 'Soothing garden aesthetic celebrating the builders and gardeners tending the ecosystem:',
         captionHooks: [
-            'Built by builders, for builders: this week\'s hackerspace finds',
-            'Maker magic: community contributions that amaze',
-            'Building blocks: what the community shipped',
-            'Craft matters: quality updates this week',
+            'Cultivated by gardeners: community growth this week',
+            'Garden tended: careful builders shaped these updates',
+            'Horticultural mastery: patient innovation blooms',
+            'Ecosystem stewards: community care documented',
         ],
     },
 
     sunday: {
-        name: 'Sunday Spectrum',
-        imageStyle: 'Holistic nature-themed comic flowchart, organic growth patterns, ecosystem harmony',
-        captionTone: 'Reflective, integrative, ecosystem perspective',
-        visualElements: ['flowering networks', 'ecosystem balance', 'growth spirals', 'natural harmony', 'interconnected nodes'],
-        colorPalette: ['emerald green', 'golden orange', 'sky blue', 'purple'],
-        promptPrefix: 'Nature-themed organic comic flowchart with ecosystem harmony showing integrated updates:',
+        name: 'Sunday Synthesis',
+        imageStyle: SOOTHING_BASE_STYLE,
+        captionTone: 'Reflective, integrative, complete ecosystem perspective',
+        visualElements: [...SOOTHING_ELEMENTS, 'complete cycles', 'holistic balance', 'full spectrum growth'],
+        colorPalette: SOOTHING_COLORS,
+        promptPrefix: 'Soothing nature canvas depicting the complete week - all changes integrated into one harmonious ecosystem:',
         captionHooks: [
-            'Week in review: see how it all connects',
-            'Ecosystem perspective: what\'s growing strong',
-            'Sunday synthesis: the week\'s integrated story',
-            'Full spectrum: all the ways this week powered growth',
+            'Week complete: ecosystem in balance and harmony',
+            'Full spectrum growth: integrated view of all changes',
+            'Synthesis Sunday: all updates woven together',
+            'Harvest review: complete growth cycle documented',
         ],
     },
 };
@@ -140,16 +145,29 @@ export function getRandomCaptionHook(): string {
 
 export function buildThemedImagePrompt(basePRList: string): string {
     const theme = getCurrentTheme();
-    const elementsStr = theme.visualElements.slice(0, 4).join(', ');
+    const elementsStr = theme.visualElements.slice(0, 5).join(', ');
     const colorsStr = theme.colorPalette.join(', ');
 
     return `${theme.promptPrefix}
+
+CHANGES TO SHOWCASE (compressed visual summary needed):
 ${basePRList}
+
+CONSTRAINTS:
+- Soothing watercolor/nature aesthetic - ALWAYS calm and serene
+- Aligned with Pollinations' nature/growth themes
+- Show all changes CONDENSED into one cohesive natural image
+- NO harsh colors, dramatic lighting, or motion lines
+- Soft gradients, organic flow, gentle integration
+- Make it feel like the ecosystem naturally evolved with these changes
+- Abstract representation of updates as part of a living system
+
 Visual elements: ${elementsStr}
 Color palette: ${colorsStr}
 Day theme: ${theme.name}
 Style: ${theme.imageStyle}
-Output SHORT image prompt (2-3 sentences). Strip all dates, counts, metrics. Dynamic energy and motion. ONLY output the image prompt.`;
+
+Output SHORT image prompt (2-3 sentences max). Focus on SOOTHING, NATURE-ALIGNED aesthetic. All changes integrated organically. ONLY output the image prompt.`;
 }
 
 export function buildThemedCaption(generatedTitle: string): string {
