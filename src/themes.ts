@@ -147,27 +147,39 @@ export function buildThemedImagePrompt(basePRList: string): string {
     const theme = getCurrentTheme();
     const elementsStr = theme.visualElements.slice(0, 5).join(', ');
     const colorsStr = theme.colorPalette.join(', ');
+    
+    // Extract key changes from PR list for visual representation
+    const changeCount = (basePRList.match(/\n/g) || []).length + 1;
+    const changeCategories = basePRList.includes('feature') ? 'feature-rich' : 
+                           basePRList.includes('fix') ? 'refined' :
+                           basePRList.includes('performance') ? 'optimized' :
+                           basePRList.includes('infrastructure') ? 'strengthened' :
+                           'evolved';
 
     return `${theme.promptPrefix}
 
-CHANGES TO SHOWCASE (compressed visual summary needed):
+VISUAL COMPRESSION REQUIREMENTS:
+- Condense ALL these changes into ONE unified natural landscape: ${changeCount} updates across ${changeCategories} areas
+- Each change becomes a subtle visual layer in the ecosystem (roots for infrastructure, blooms for features, water flow for data)
+- Show progression/growth from left to right or center outward
+- Stack complexity naturally: foundation → growth → flourishing
+
+CHANGES SUMMARY (abstract into natural elements):
 ${basePRList}
 
-CONSTRAINTS:
-- Soothing watercolor/nature aesthetic - ALWAYS calm and serene
-- Aligned with Pollinations' nature/growth themes
-- Show all changes CONDENSED into one cohesive natural image
-- NO harsh colors, dramatic lighting, or motion lines
-- Soft gradients, organic flow, gentle integration
-- Make it feel like the ecosystem naturally evolved with these changes
-- Abstract representation of updates as part of a living system
+COMPOSITION INSTRUCTIONS:
+- Watercolor texture, layered soft washes
+- Root systems represent infrastructure changes
+- Blooms/flowers for new features
+- Flowing water/sap for performance & data improvements
+- Interconnected pathways show integration & connectivity
+- All elements naturally coexist in one harmonious scene
 
-Visual elements: ${elementsStr}
-Color palette: ${colorsStr}
-Day theme: ${theme.name}
-Style: ${theme.imageStyle}
+Visual palette: ${elementsStr}
+Colors: ${colorsStr}
+Aesthetic: ${theme.imageStyle}
 
-Output SHORT image prompt (2-3 sentences max). Focus on SOOTHING, NATURE-ALIGNED aesthetic. All changes integrated organically. ONLY output the image prompt.`;
+Output ONE concise image prompt (2-3 sentences). Make it visually represent the DENSITY and SCOPE of all changes condensed into serene natural evolution. ONLY output the image prompt.`;
 }
 
 export function buildThemedCaption(generatedTitle: string): string {
