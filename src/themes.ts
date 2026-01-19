@@ -15,14 +15,36 @@ const SOOTHING_BASE_STYLE = 'Soothing watercolor-inspired nature composition wit
 const SOOTHING_COLORS = ['soft sage green', 'warm cream', 'sky blue', 'gentle gold', 'muted terracotta'];
 const SOOTHING_ELEMENTS = ['flowing vines', 'blooming flowers', 'interconnected roots', 'gentle light rays', 'organic growth patterns', 'ecosystem balance'];
 
+// Dynamic style variations for each day
+const MONDAY_STYLE = 'Energetic watercolor with vibrant sunrise hues, explosive growth patterns, blooming flowers bursting with energy, dynamic light rays piercing through morning mist';
+const MONDAY_COLORS = ['sunrise orange', 'electric lime', 'sky blue', 'golden yellow', 'deep green'];
+
+const TUESDAY_STYLE = 'Detailed technical nature illustration with intricate root networks, neural-like patterns in tree branches, data streams flowing like water, precision meets organic beauty';
+const TUESDAY_COLORS = ['deep forest green', 'electric blue', 'silver', 'gold', 'emerald'];
+
+const WEDNESDAY_STYLE = 'Surreal, dreamlike nature art with impossible plants, morphing flowers, fractals in nature, experimental colors blending organically, creative mutations of reality';
+const WEDNESDAY_COLORS = ['magenta', 'deep purple', 'turquoise', 'acid green', 'copper'];
+
+const THURSDAY_STYLE = 'Interconnected ecosystem illustration showing symbiosis, pollination cycles in motion, creatures collaborating, intricate networks pulsing with life, harmonious complexity';
+const THURSDAY_COLORS = ['coral pink', 'teal blue', 'lime green', 'warm gold', 'plum purple'];
+
+const FRIDAY_STYLE = 'Celebratory nature burst with peak blooms, overflowing abundance, radiant colors at peak saturation, fireworks of flowers, triumphant growth captured mid-flourish';
+const FRIDAY_COLORS = ['vibrant pink', 'sunset orange', 'golden yellow', 'hot pink', 'lime green'];
+
+const SATURDAY_STYLE = 'Handcrafted garden aesthetic with visible brushstrokes, textured soil, carefully arranged plants, human-scale beauty, warm intimate cultivation captured with care';
+const SATURDAY_COLORS = ['earthy brown', 'sage green', 'rust orange', 'warm taupe', 'deep green'];
+
+const SUNDAY_STYLE = 'Cosmic nature vista showing complete cycles, panoramic ecosystem view, all seasons visible simultaneously, convergence of all changes into one harmonious symphony';
+const SUNDAY_COLORS = ['midnight blue', 'silver white', 'aurora green', 'cosmic purple', 'starlight gold'];
+
 export const themes: Record<DayOfWeek, Theme> = {
     monday: {
         name: 'Momentum Monday',
-        imageStyle: SOOTHING_BASE_STYLE,
+        imageStyle: MONDAY_STYLE,
         captionTone: 'Inspirational, energetic, motivating developers to build',
-        visualElements: [...SOOTHING_ELEMENTS, 'morning growth', 'fresh beginnings'],
-        colorPalette: SOOTHING_COLORS,
-        promptPrefix: 'Soothing nature illustration capturing this week\'s momentum and growth:',
+        visualElements: ['explosive growth', 'sunrise energy', 'bursting blooms', 'dynamic light', 'awakening forest', 'morning momentum'],
+        colorPalette: MONDAY_COLORS,
+        promptPrefix: 'Energetic nature illustration capturing explosive momentum and vibrant new week energy:',
         captionHooks: [
             'Week sprouts: check out what\'s growing',
             'Fresh growth energy in these updates',
@@ -33,11 +55,11 @@ export const themes: Record<DayOfWeek, Theme> = {
 
     tuesday: {
         name: 'Technical Tuesday',
-        imageStyle: SOOTHING_BASE_STYLE,
+        imageStyle: TUESDAY_STYLE,
         captionTone: 'Technical depth, builder-focused, nature-informed systems',
-        visualElements: [...SOOTHING_ELEMENTS, 'neural networks', 'data flows in nature'],
-        colorPalette: SOOTHING_COLORS,
-        promptPrefix: 'Soothing nature-inspired illustration showing the technical architecture and systems evolved:',
+        visualElements: ['neural networks', 'root systems', 'data flows', 'intricate patterns', 'precision growth', 'technical harmony'],
+        colorPalette: TUESDAY_COLORS,
+        promptPrefix: 'Technical nature illustration showing deep architecture and systems evolved:',
         captionHooks: [
             'Roots deepen: technical foundations strengthened',
             'System harmony: infrastructure cultivated this week',
@@ -48,11 +70,11 @@ export const themes: Record<DayOfWeek, Theme> = {
 
     wednesday: {
         name: 'Creative Wednesday',
-        imageStyle: SOOTHING_BASE_STYLE,
+        imageStyle: WEDNESDAY_STYLE,
         captionTone: 'Creative, imaginative, experimental yet soothing vibes',
-        visualElements: [...SOOTHING_ELEMENTS, 'creative mutations', 'experimental blooms'],
-        colorPalette: SOOTHING_COLORS,
-        promptPrefix: 'Soothing nature composition celebrating creative experiments and innovative evolution:',
+        visualElements: ['creative mutations', 'experimental blooms', 'surreal plants', 'fractal flowers', 'morphing shapes', 'impossible beauty'],
+        colorPalette: WEDNESDAY_COLORS,
+        promptPrefix: 'Surreal creative nature composition celebrating experimental innovation:',
         captionHooks: [
             'Mid-week metamorphosis: inventive updates flourish',
             'Creative pollination: new ideas cross-breed',
@@ -63,11 +85,11 @@ export const themes: Record<DayOfWeek, Theme> = {
 
     thursday: {
         name: 'Ecosystem Thursday',
-        imageStyle: SOOTHING_BASE_STYLE,
+        imageStyle: THURSDAY_STYLE,
         captionTone: 'Integration-focused, community building, interconnected systems',
-        visualElements: [...SOOTHING_ELEMENTS, 'symbiotic relationships', 'interconnected networks', 'pollination cycles'],
-        colorPalette: SOOTHING_COLORS,
-        promptPrefix: 'Soothing nature illustration of interconnected ecosystem showing integrated systems and community pollination:',
+        visualElements: ['symbiotic relationships', 'interconnected networks', 'pollination cycles', 'collaborative growth', 'pulsing connections', 'living harmony'],
+        colorPalette: THURSDAY_COLORS,
+        promptPrefix: 'Interconnected ecosystem illustration showing integration and community pollination:',
         captionHooks: [
             'Ecosystem thrives: everything connects this week',
             'Pollination in progress: ideas cross-breed beautifully',
@@ -78,11 +100,11 @@ export const themes: Record<DayOfWeek, Theme> = {
 
     friday: {
         name: 'Feature Friday',
-        imageStyle: SOOTHING_BASE_STYLE,
+        imageStyle: FRIDAY_STYLE,
         captionTone: 'Celebratory yet serene, joyful achievements in nature context',
-        visualElements: [...SOOTHING_ELEMENTS, 'flourishing abundance', 'peak bloom moments'],
-        colorPalette: SOOTHING_COLORS,
-        promptPrefix: 'Soothing nature masterpiece celebrating the week\'s flourishing features and fruitful achievements:',
+        visualElements: ['flourishing abundance', 'peak bloom moments', 'radiant colors', 'overflowing growth', 'triumphant blooms', 'harvest celebration'],
+        colorPalette: FRIDAY_COLORS,
+        promptPrefix: 'Celebratory nature masterpiece of flourishing features and fruitful achievements:',
         captionHooks: [
             'Week in full bloom: harvest of features shipped',
             'Peak pollination: cross-breed successes documented',
@@ -93,11 +115,11 @@ export const themes: Record<DayOfWeek, Theme> = {
 
     saturday: {
         name: 'Builders Saturday',
-        imageStyle: SOOTHING_BASE_STYLE,
+        imageStyle: SATURDAY_STYLE,
         captionTone: 'Community-focused, hands-on cultivation, gardener energy',
-        visualElements: [...SOOTHING_ELEMENTS, 'careful cultivation', 'gardener\'s work', 'tended gardens'],
-        colorPalette: SOOTHING_COLORS,
-        promptPrefix: 'Soothing garden aesthetic celebrating the builders and gardeners tending the ecosystem:',
+        visualElements: ['careful cultivation', 'gardener\'s work', 'tended gardens', 'textured growth', 'handcrafted beauty', 'intimate care'],
+        colorPalette: SATURDAY_COLORS,
+        promptPrefix: 'Handcrafted garden aesthetic celebrating the builders and gardeners tending the ecosystem:',
         captionHooks: [
             'Cultivated by gardeners: community growth this week',
             'Garden tended: careful builders shaped these updates',
@@ -108,11 +130,11 @@ export const themes: Record<DayOfWeek, Theme> = {
 
     sunday: {
         name: 'Sunday Synthesis',
-        imageStyle: SOOTHING_BASE_STYLE,
+        imageStyle: SUNDAY_STYLE,
         captionTone: 'Reflective, integrative, complete ecosystem perspective',
-        visualElements: [...SOOTHING_ELEMENTS, 'complete cycles', 'holistic balance', 'full spectrum growth'],
-        colorPalette: SOOTHING_COLORS,
-        promptPrefix: 'Soothing nature canvas depicting the complete week - all changes integrated into one harmonious ecosystem:',
+        visualElements: ['complete cycles', 'holistic balance', 'full spectrum growth', 'cosmic harmony', 'convergence', 'panoramic symphony'],
+        colorPalette: SUNDAY_COLORS,
+        promptPrefix: 'Cosmic nature canvas depicting the complete week - all changes integrated into one harmonious ecosystem:',
         captionHooks: [
             'Week complete: ecosystem in balance and harmony',
             'Full spectrum growth: integrated view of all changes',
@@ -124,7 +146,9 @@ export const themes: Record<DayOfWeek, Theme> = {
 
 export function getCurrentDayOfWeek(): DayOfWeek {
     const day = new Date().getDay();
-    const days: DayOfWeek[] = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const days: DayOfWeek[] = ["wednesday", "wednesday", "wednesday", "wednesday", "wednesday", "wednesday", "wednesday"]
+
+
     return days[day];
 }
 
@@ -148,56 +172,82 @@ export function buildThemedImagePrompt(prSummary: string, prObjects?: any[]): st
     const elementsStr = theme.visualElements.slice(0, 5).join(', ');
     const colorsStr = theme.colorPalette.join(', ');
     
-    // Build a detailed description of what changed
-    let changeDescription = '';
+    // Build detailed visual metaphors for each change category
+    let visualMapping = '';
+    let changeCount = 0;
+    
     if (prObjects && prObjects.length > 0) {
-        const categories: Record<string, string[]> = {
-            'feature': [],
-            'fix': [],
-            'docs': [],
-            'perf': [],
-            'other': []
+        const categories: Record<string, { items: string[], visual: string, description: string }> = {
+            'feature': { 
+                items: [], 
+                visual: 'NEW BLOOMS', 
+                description: 'radiant new flowers sprouting, bright colorful petals unfurling'
+            },
+            'fix': { 
+                items: [], 
+                visual: 'STRENGTHENED ROOTS', 
+                description: 'solid roots deepening and reinforcing foundation, cracks mending'
+            },
+            'perf': { 
+                items: [], 
+                visual: 'FLOWING ENERGY', 
+                description: 'water, light, or sap flowing faster and more freely, luminous streams'
+            },
+            'docs': { 
+                items: [], 
+                visual: 'CLEAR PATHWAYS', 
+                description: 'illuminated paths and clear guide lines through the ecosystem'
+            },
+            'other': { 
+                items: [], 
+                visual: 'IMPROVEMENTS', 
+                description: 'overall growth and cultivation advancing'
+            }
         };
         
         prObjects.forEach(pr => {
             const title = pr.title.toLowerCase();
-            if (title.includes('feat') || title.includes('add')) categories['feature'].push(pr.title);
-            else if (title.includes('fix') || title.includes('bug')) categories['fix'].push(pr.title);
-            else if (title.includes('docs')) categories['docs'].push(pr.title);
-            else if (title.includes('perf') || title.includes('optim')) categories['perf'].push(pr.title);
-            else categories['other'].push(pr.title);
+            changeCount++;
+            if (title.includes('feat') || title.includes('add')) categories['feature'].items.push(pr.title);
+            else if (title.includes('fix') || title.includes('bug')) categories['fix'].items.push(pr.title);
+            else if (title.includes('docs')) categories['docs'].items.push(pr.title);
+            else if (title.includes('perf') || title.includes('optim')) categories['perf'].items.push(pr.title);
+            else categories['other'].items.push(pr.title);
         });
         
-        changeDescription = `\nCHANGES MADE:`;
-        if (categories['feature'].length > 0) changeDescription += `\nNew Features: ${categories['feature'].slice(0, 2).join(', ')}`;
-        if (categories['fix'].length > 0) changeDescription += `\nBug Fixes: ${categories['fix'].slice(0, 2).join(', ')}`;
-
-        if (categories['perf'].length > 0) changeDescription += `\nPerformance: ${categories['perf'].slice(0, 2).join(', ')}`;
-        if (categories['docs'].length > 0) changeDescription += `\nDocumentation: ${categories['docs'].join(', ')}`;
+        visualMapping = `\nVISUAL MAP OF CHANGES (each element represents real updates):`;
+        Object.entries(categories).forEach(([key, cat]) => {
+            if (cat.items.length > 0) {
+                visualMapping += `\n• ${cat.visual} - ${cat.items.slice(0, 2).join(', ')}. Show as: ${cat.description}`;
+            }
+        });
     }
 
     return `${theme.promptPrefix}
 
-WHAT ACTUALLY CHANGED (these are REAL updates):
-${prSummary}${changeDescription}
+THESE ARE THE REAL CHANGES SHIPPED (${changeCount} updates):
+${prSummary}${visualMapping}
 
-VISUALIZATION REQUIREMENTS:
-- Create an image that SHOWS the actual improvements and growth made
-- Each change becomes a visual layer: new features as new blooms, fixes as strengthened roots, performance improvements as flowing energy
-- Show BEFORE and AFTER conceptually (foundation strengthened → improvements flowing)
-- Make it clear this represents TECHNICAL PROGRESS and PRODUCT EVOLUTION
+YOUR TASK - Create an image where these SPECIFIC changes are VISUALLY CLEAR:
+- This is not generic growth - show the ACTUAL improvements we made
+- Each visual element DIRECTLY represents a real technical change
+- Make it obvious to viewers: "I can see what actually changed here"
+- The image should tell the story of product evolution, not just pretty nature
 
-COMPOSITION:
-- Watercolor with flowing movement showing growth and improvement
-- Central focus: ecosystem thriving with changes applied
-- Flow from left to right: foundation → active changes → flourishing results
-- All changes visible as integrated improvements in one harmonious scene
+COMPOSITION INSTRUCTIONS:
+- Use ${elementsStr} as main visual metaphors
+- Central focus: all ${changeCount} changes visible and integrated
+- Create visual progression: showing what was improved → how it flows through the system → the result
+- Make the changes PROMINENT - they are the stars of this image, not background details
 
-Visual palette: ${elementsStr}
-Colors: ${colorsStr}
+Color strategy:
+- Use ${colorsStr} to make different change types visually distinct
+- Ensure the viewer's eye is drawn to the specific improvements
+- Create contrast so changes POP against the background
+
 Style: ${theme.imageStyle}
 
-Generate ONE concise image prompt (2-3 sentences max) that visually represents these SPECIFIC changes. ONLY output the image prompt.`;
+Generate ONE concise image prompt (2-3 sentences max) that an AI image generator can execute to create an image where our SPECIFIC CHANGES are the focal point. ONLY output the image prompt, nothing else.`;
 }
 
 export function buildThemedCaption(generatedTitle: string): string {
