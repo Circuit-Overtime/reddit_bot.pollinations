@@ -146,7 +146,7 @@ export const themes: Record<DayOfWeek, Theme> = {
 
 export function getCurrentDayOfWeek(): DayOfWeek {
     const day = new Date().getDay();
-    const days: DayOfWeek[] = ["sunday", "sunday", "sunday", "sunday", "sunday", "sunday", "sunday"];
+    const days: DayOfWeek[] = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
 
     return days[day];
