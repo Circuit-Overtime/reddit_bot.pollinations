@@ -48,7 +48,7 @@ interval=2
 
 echo "🚀 Starting Pollinations deployment pipeline..."
 echo "📝 Step 1: Generating image prompt and updating link.ts..."
-$NPX tsx src/pipeline_new.ts
+$NPX tsx src/pipeline.ts 2>&1
 PIPELINE_EXIT_CODE=$?
 if [ $PIPELINE_EXIT_CODE -eq 0 ]; then
   echo "✓ Pipeline completed successfully"
