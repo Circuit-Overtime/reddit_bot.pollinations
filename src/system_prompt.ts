@@ -100,3 +100,5 @@ Color palette for Pollinations brand (Reddit adaptation):
 
 return system_prompt.replace("{pr_summary}", pr_summary);
 }
+
+export { getSystemPromptTemplate };
