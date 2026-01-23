@@ -6,7 +6,7 @@ After=network.target
 Type=simple
 User=root
 WorkingDirectory=/root/reddit_bot.pollinations
-ExecStart=/usr/bin/bash ./deploy.sh
+ExecStart=/usr/bin/bash ./bash/deploy.sh
 Environment=NODE_ENV=production
 Restart=on-failure
 
