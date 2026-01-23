@@ -11,30 +11,30 @@ export interface Theme {
 }
 
 // Base soothing nature aesthetic - consistent across all days, aligned with Pollinations identity
-const SOOTHING_BASE_STYLE = 'Soothing watercolor-inspired nature composition with flowing organic elements, soft gradients, serene ecosystem harmony. Gentle visual documentation of interconnected growth and evolution.';
+const SOOTHING_BASE_STYLE = 'Soothing watercolor-inspired nature composition with flowing organic elements, soft gradients, serene ecosystem harmony. Gentle visual documentation of interconnected growth and evolution with a cute, friendly bee mascot acting as a guide.';
 const SOOTHING_COLORS = ['soft sage green', 'warm cream', 'sky blue', 'gentle gold', 'muted terracotta'];
-const SOOTHING_ELEMENTS = ['flowing vines', 'blooming flowers', 'interconnected roots', 'gentle light rays', 'organic growth patterns', 'ecosystem balance'];
+const SOOTHING_ELEMENTS = ['flowing vines', 'blooming flowers', 'interconnected roots', 'gentle light rays', 'organic growth patterns', 'ecosystem balance', 'cute bee mascot', 'bee pointing at elements'];
 
 // Dynamic style variations for each day
-const MONDAY_STYLE = 'Energetic watercolor with vibrant sunrise hues, explosive growth patterns, blooming flowers bursting with energy, dynamic light rays piercing through morning mist';
+const MONDAY_STYLE = 'Energetic watercolor with vibrant sunrise hues, explosive growth patterns, blooming flowers bursting with energy, dynamic light rays piercing through morning mist, with a cute energetic bee mascot enthusiastically pointing at the new growth';
 const MONDAY_COLORS = ['sunrise orange', 'warm gold', 'sky blue', 'soft yellow', 'forest green'];
 
-const TUESDAY_STYLE = 'Detailed technical nature illustration with intricate root networks, neural-like patterns in tree branches, data streams flowing like water, precision meets organic beauty';
+const TUESDAY_STYLE = 'Detailed technical nature illustration with intricate root networks, neural-like patterns in tree branches, data streams flowing like water, precision meets organic beauty, with a thoughtful bee mascot studying the diagrams and pointing out technical details';
 const TUESDAY_COLORS = ['deep forest green', 'slate blue', 'bronze gold', 'silver-grey', 'emerald'];
 
-const WEDNESDAY_STYLE = 'Surreal, dreamlike nature art with impossible plants, morphing flowers, fractals in nature, experimental colors blending organically, creative mutations of reality';
+const WEDNESDAY_STYLE = 'Surreal, dreamlike nature art with impossible plants, morphing flowers, fractals in nature, experimental colors blending organically, creative mutations of reality, with a playful, curious bee mascot exploring the creative transformations';
 const WEDNESDAY_COLORS = ['sage purple', 'dusty rose', 'forest teal', 'soft sage green', 'copper bronze'];
 
-const THURSDAY_STYLE = 'Interconnected ecosystem illustration showing symbiosis, pollination cycles in motion, creatures collaborating, intricate networks pulsing with life, harmonious complexity';
+const THURSDAY_STYLE = 'Interconnected ecosystem illustration showing symbiosis, pollination cycles in motion, creatures collaborating, intricate networks pulsing with life, harmonious complexity, with the bee mascot as the central coordinator pointing to connections and collaborations';
 const THURSDAY_COLORS = ['coral peach', 'teal blue', 'sage green', 'golden orange', 'plum purple'];
 
-const FRIDAY_STYLE = 'Celebratory nature burst with peak blooms, overflowing abundance, radiant colors at peak saturation, fireworks of flowers, triumphant growth captured mid-flourish';
+const FRIDAY_STYLE = 'Celebratory nature burst with peak blooms, overflowing abundance, radiant colors at peak saturation, fireworks of flowers, triumphant growth captured mid-flourish, with a joyful bee mascot dancing among the flowers in celebration';
 const FRIDAY_COLORS = ['sunset orange', 'peachy pink', 'golden yellow', 'coral rose', 'olive green'];
 
-const SATURDAY_STYLE = 'Handcrafted garden aesthetic with visible brushstrokes, textured soil, carefully arranged plants, human-scale beauty, warm intimate cultivation captured with care';
+const SATURDAY_STYLE = 'Handcrafted garden aesthetic with visible brushstrokes, textured soil, carefully arranged plants, human-scale beauty, warm intimate cultivation captured with care, with the bee mascot as a helpful gardener, pointing out the carefully tended plants';
 const SATURDAY_COLORS = ['earthy brown', 'sage green', 'rust orange', 'warm taupe', 'deep green'];
 
-const SUNDAY_STYLE = 'Cosmic nature vista showing complete cycles, panoramic ecosystem view, all seasons visible simultaneously, convergence of all changes into one harmonious symphony';
+const SUNDAY_STYLE = 'Cosmic nature vista showing complete cycles, panoramic ecosystem view, all seasons visible simultaneously, convergence of all changes into one harmonious symphony, with the bee mascot as a wise guide pointing across the entire panorama';
 const SUNDAY_COLORS = ['midnight blue', 'silver white', 'aurora green', 'soft indigo', 'warm gold'];
 
 export const themes: Record<DayOfWeek, Theme> = {
@@ -176,6 +176,7 @@ export function buildThemedImagePrompt(prSummary: string, prObjects?: any[]): st
     let visualMapping = '';
     let changeCount = 0;
     let textOverlay = '';
+    let beeDirections = '';
     
     if (prObjects && prObjects.length > 0) {
         const categories: Record<string, { items: string[], visual: string, description: string }> = {
@@ -225,10 +226,19 @@ export function buildThemedImagePrompt(prSummary: string, prObjects?: any[]): st
             }
         });
         
+        beeDirections = `\nBEE MASCOT ROLE - Our cute bee teacher:
+- Position the cute bee mascot throughout the image as a guide and teacher
+- The bee should be pointing with its front legs/antennae at different visual elements (NEW BLOOMS, STRENGTHENED ROOTS, FLOWING ENERGY, etc.)
+- Make the bee look cheerful, helpful, and enthusiastic about the changes
+- The bee should appear in multiple places, teaching about different improvements
+- Use the bee to draw attention to key changes - it's pointing them out like a knowledgeable teacher on a diagram
+- The bee mascot reinforces our Pollinations brand identity - keep it cute, warm, and inviting
+- Let the bee's gestures naturally guide the viewer's eye through the visual story of improvements`;
+
         textOverlay = `\nTEXT OVERLAY - Add these change labels directly on the image:
 - Blend text seamlessly into the composition (not bold banner, but integrated)
 - Use elegant, flowing typography that matches the nature aesthetic
-- Place text labels near their corresponding visual elements
+- Place text labels near their corresponding visual elements AND near where the bee is pointing
 - Use semi-transparent or blended text so it feels part of the artwork
 - Key changes to display: ${textItems.slice(0, 3).join(' • ')}
 - Make text glow subtly with colors from the palette: ${colorsStr}
@@ -238,29 +248,31 @@ export function buildThemedImagePrompt(prSummary: string, prObjects?: any[]): st
     return `${theme.promptPrefix}
 
 THESE ARE THE REAL CHANGES SHIPPED (${changeCount} updates):
-${prSummary}${visualMapping}${textOverlay}
+${prSummary}${visualMapping}${beeDirections}${textOverlay}
 
 YOUR TASK - Create an image where these SPECIFIC changes are VISUALLY CLEAR:
 - This is not generic growth - show the ACTUAL improvements we made
 - Each visual element DIRECTLY represents a real technical change
 - Make it obvious to viewers: "I can see what actually changed here"
 - The image should tell the story of product evolution, not just pretty nature
+- The cute bee mascot should be an integral part of the teaching/pointing narrative
 
 COMPOSITION INSTRUCTIONS:
 - Use ${elementsStr} as main visual metaphors
-- Central focus: all ${changeCount} changes visible and integrated
+- Central focus: all ${changeCount} changes visible, integrated, and highlighted by the bee mascot
 - Create visual progression: showing what was improved → how it flows through the system → the result
 - Make the changes PROMINENT - they are the stars of this image, not background details
+- The bee mascot guides viewers through the improvements like a knowledgeable teacher
 
 Color strategy:
 - ONLY use nature-inspired colors from this palette: ${colorsStr}
 - Make different change types visually distinct through color and visual metaphor
-- Ensure the viewer's eye is drawn to the specific improvements
+- Ensure the viewer's eye is drawn to the specific improvements (guided by the bee)
 - Create contrast so changes POP against the background
 
 Style: ${theme.imageStyle}
 
-Generate ONE concise image prompt (2-3 sentences max) that an AI image generator can execute to create an image where our SPECIFIC CHANGES are the focal point with stylish integrated text. ONLY output the image prompt, nothing else.`;
+Generate ONE concise image prompt (2-3 sentences max) that an AI image generator can execute to create an image where our SPECIFIC CHANGES are the focal point with our cute bee mascot pointing them out like a teacher, with stylish integrated text. ONLY output the image prompt, nothing else.`;
 }
 
 export function buildThemedCaption(generatedTitle: string): string {

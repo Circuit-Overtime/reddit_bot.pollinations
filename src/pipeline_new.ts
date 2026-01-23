@@ -176,12 +176,14 @@ async function createImagePrompt(prs : any[], dateString: string, pollinationsTo
         return `${pr.title} (${label})`;
     }).join(' | ');
     
-    const systemPrompt = `You are creating a visual summary of software updates. Create a SHORT image prompt (2-3 sentences) that visually represents the ACTUAL CHANGES described. 
+    const systemPrompt = `You are creating a visual summary of software updates. Create a SHORT image prompt (2-3 sentences) that visually represents the ACTUAL CHANGES described with our cute bee mascot as a guide. 
     Theme style: ${theme.imageStyle}
     Visual elements to use: ${theme.visualElements.slice(0, 3).join(', ')}
     Color palette: ${theme.colorPalette.join(', ')}
     
-    Your prompt must visually communicate what these changes DO, not be generic. Show growth, improvement, technical advancement.
+    IMPORTANT: Include the Pollinations bee mascot as a key element - the bee should be pointing at and teaching viewers about the different improvements and changes. The bee is our brand mascot and should appear as a friendly, knowledgeable guide in the composition.
+    
+    Your prompt must visually communicate what these changes DO, not be generic. Show growth, improvement, technical advancement - all guided and highlighted by the bee mascot.
     Output ONLY the image prompt, no markdown, no extra text.`;
     const userPrompt = buildThemedImagePrompt(prDetails, prs.slice(0, 10));
 
