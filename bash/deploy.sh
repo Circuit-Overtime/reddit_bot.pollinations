@@ -53,7 +53,7 @@ PIPELINE_EXIT_CODE=$?
 if [ $PIPELINE_EXIT_CODE -eq 0 ]; then
   echo "✓ Pipeline completed successfully"
   if ! [ -f src/link.ts ] || [ -z "$(grep -o 'const LINK' src/link.ts)" ]; then
-    echo "ℹ️  No merged PRs found. Exiting with success."
+    echo "ℹ️  No merged PRs found. Exiting without posting."
     exit 0
   fi
 else

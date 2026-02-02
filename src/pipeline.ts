@@ -358,7 +358,7 @@ async function pipeline(githubToken : string, pollinationsToken : string) {
         
         if (!result || !result.prs || result.prs.length === 0) {
             console.log('ℹ️  No merged PRs found in the previous day. Exiting pipeline.');
-            process.exit(0);
+            return null;
         }
         
         const { prs, dateString } = result;
@@ -393,6 +393,12 @@ async function pipeline(githubToken : string, pollinationsToken : string) {
 
 (async () => {
 const promptData = await pipeline(githubToken as string, pollinationsToken as string);
+
+if (!promptData) {
+    console.log('No PRs to process. Pipeline complete.');
+    process.exit(0);
+}
+
 console.log(promptData)
 console.log('Final Results:');
 console.log(`Image URL: ${promptData.LINK}`);
