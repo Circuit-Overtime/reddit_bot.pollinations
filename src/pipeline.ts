@@ -19,8 +19,8 @@ throw new Error('Pollinations token not configured. Please set it in app setting
 
 function getPreviousDayRange() {
     const now = new Date();
-    const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const startDate = new Date(endDate.getTime() - 24 * 60 * 60 * 1000);
+    const endDate = now;
+    const startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
     
     return {
         startDate,
