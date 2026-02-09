@@ -17,10 +17,10 @@ if (!pollinationsToken) {
 throw new Error('Pollinations token not configured. Please set it in app settings.');
 }
 
-function getPreviousDayRange() {
-    const now = new Date();
-    const endDate = now;
-    const startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+function getPreviousDayRange(triggerTime: Date = new Date()) {
+    // Get PRs from 1 day before trigger time to trigger time
+    const endDate = triggerTime;
+    const startDate = new Date(triggerTime.getTime() - 24 * 60 * 60 * 1000);
     
     return {
         startDate,
@@ -36,12 +36,12 @@ function getTodayDate() {
     return `${year}-${month}-${day}`;
 }
 
-async function getMergedPRsFromPreviousDay(owner : any = 'pollinations', repo : any = 'pollinations', githubToken : string) {
+async function getMergedPRsFromPreviousDay(owner : any = 'pollinations', repo : any = 'pollinations', githubToken : string, triggerTime: Date = new Date()) {
     if (!githubToken) {
         throw new Error('GitHub token is required');
     }
 
-    const { startDate, endDate } = getPreviousDayRange();
+    const { startDate, endDate } = getPreviousDayRange(triggerTime);
     const dateString = startDate.toISOString().split('T')[0];
 
     const query = `
@@ -350,11 +350,13 @@ async function generateImage(prompt : string, pollinationsToken : string, attemp
     }
 }
 
-async function pipeline(githubToken : string, pollinationsToken : string) {
+async function pipeline(githubToken : string, pollinationsToken : string, triggerTime: Date = new Date()) {
     try {
-        console.log('\n📋 Fetching merged PRs from previous day...\n');
+        const triggerTimeStr = triggerTime.toISOString();
+        console.log('\n📋 Fetching merged PRs from 1 day before trigger...\n');
+        console.log(`Trigger time: ${triggerTimeStr}\n`);
         
-        const result = await getMergedPRsFromPreviousDay('pollinations', 'pollinations', githubToken);
+        const result = await getMergedPRsFromPreviousDay('pollinations', 'pollinations', githubToken, triggerTime);
         
         if (!result || !result.prs || result.prs.length === 0) {
             console.log('ℹ️  No merged PRs found in the previous day. Exiting pipeline.');
@@ -392,7 +394,8 @@ async function pipeline(githubToken : string, pollinationsToken : string) {
 
 
 (async () => {
-const promptData = await pipeline(githubToken as string, pollinationsToken as string);
+const triggerTime = new Date(); // Capture trigger time at execution start
+const promptData = await pipeline(githubToken as string, pollinationsToken as string, triggerTime);
 
 if (!promptData) {
     console.log('No PRs to process. Pipeline complete.');
