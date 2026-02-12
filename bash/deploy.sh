@@ -73,8 +73,8 @@ $NPX devvit playtest "$SUBREDDIT" &
 PLAYTEST_PID=$!
 sleep 3
 
-echo "📝 Step 3: Triggering update (modify main.ts)..."
-echo "" >> src/main.ts
+echo "📝 Step 3: Triggering update (modify og_main.ts)..."
+echo "" >> src/og_main.ts
 
 echo "📊 Step 4: Watching for successful image post..."
 echo ""
