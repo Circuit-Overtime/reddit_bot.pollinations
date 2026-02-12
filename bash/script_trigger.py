@@ -50,10 +50,13 @@ LINKEOF
         ssh.exec_command(update_link_cmd)
 
         # Run deploy.sh from the project directory, log to deploy.log
-        deploy_cmd = f"{base_cmd} && nohup bash ./bash/deploy.sh > deploy.log 2>&1 &"
+        deploy_cmd = f"{base_cmd} && nohup bash ./bash/deploy.sh > deploy.log 2>&1 & echo \"PID: $!\""
 
         print("  VPS: Running deploy.sh from project directory...")
-        ssh.exec_command(deploy_cmd)
+        stdin, stdout, stderr = ssh.exec_command(deploy_cmd)
+        output = stdout.read().decode().strip()
+        if output:
+            print(f"  VPS: {output}")
         ssh.close()
 
         print("  VPS: Deployment script triggered successfully")
