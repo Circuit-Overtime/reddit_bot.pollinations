@@ -64,7 +64,7 @@ echo "📊 Step 4: Watching for successful image post..."
 echo ""
 
 echo "⏱️  Keeping process alive for 2 minutes..."
-sleep 120
+sleep 30
 
 echo ""
 echo "✅ 2 minutes elapsed. Shutting down..."

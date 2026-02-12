@@ -35,21 +35,24 @@ def deploy_reddit_post(
             look_for_keys=False,
         )
 
+        # CD into project directory and run all operations
+        base_cmd = "cd /root/reddit_post_automation"
+
         # Update link.ts with new URL and TITLE
-        update_link_cmd = f"""cat > /root/reddit_post_automation/src/link.ts << 'LINKEOF'
+        update_link_cmd = f"""{base_cmd} && cat > src/link.ts << 'LINKEOF'
 const LINK = "{image_url}";
 const TITLE = "{title}";
 export {{LINK, TITLE}};
 LINKEOF
 """
 
-        print("  VPS: Updating link.ts...")
+        print("  VPS: Changing to /root/reddit_post_automation and updating link.ts...")
         ssh.exec_command(update_link_cmd)
 
-        # Run deploy.sh, log to deploy.log
-        deploy_cmd = f"nohup bash /root/reddit_post_automation/bash/deploy.sh > /root/reddit_post_automation/deploy.log 2>&1 &"
+        # Run deploy.sh from the project directory, log to deploy.log
+        deploy_cmd = f"{base_cmd} && nohup bash ./bash/deploy.sh > deploy.log 2>&1 &"
 
-        print("  VPS: Running deploy.sh...")
+        print("  VPS: Running deploy.sh from project directory...")
         ssh.exec_command(deploy_cmd)
         ssh.close()
 
