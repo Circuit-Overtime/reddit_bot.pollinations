@@ -71,8 +71,8 @@ fi
 echo "✓ Devvit app updated successfully"
 echo ""
 
-echo "⏳ Waiting 3 seconds before proceeding..."
-sleep 3
+echo "⏳ Waiting 10 seconds before proceeding..."
+sleep 10
 echo ""
 
 cat > /root/reddit_post_automation/src/postConfig.json << EOF
