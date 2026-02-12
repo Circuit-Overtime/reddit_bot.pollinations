@@ -5,6 +5,16 @@ NPX="/usr/bin/npx"
 NODE="/usr/bin/node"
 TSX="$NODE $($NPX which tsx)"
 
+# Check if URL and TITLE are provided
+if [ $# -lt 2 ]; then
+  echo "❌ Usage: $0 <URL> <TITLE>"
+  echo "Example: $0 'https://example.com/image.jpg' 'My Title Here'"
+  exit 1
+fi
+
+URL="$1"
+TITLE="$2"
+
 cleanup() {
   local exit_code=$?
   echo ""
@@ -42,26 +52,25 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 SUBREDDIT="pollinations_ai"
-timeout=120
-elapsed=0
-interval=2
 
 echo "🚀 Starting Pollinations deployment pipeline..."
-echo "📝 Step 1: Generating image prompt and updating link.ts..."
-$NPX tsx src/pipeline.ts 2>&1
-PIPELINE_EXIT_CODE=$?
-if [ $PIPELINE_EXIT_CODE -eq 0 ]; then
-  echo "✓ Pipeline completed successfully"
-  if ! [ -f src/link.ts ] || [ -z "$(grep -o 'const LINK' src/link.ts)" ]; then
-    echo "ℹ️  No merged PRs found. Exiting without posting."
-    exit 0
-  fi
+echo "📝 Step 1: Updating link.ts with provided URL and TITLE..."
+
+# Create link.ts with the provided URL and TITLE
+cat > src/link.ts << EOF
+const LINK = "$URL";
+const TITLE = "$TITLE";
+export {LINK, TITLE};
+EOF
+
+if [ $? -eq 0 ]; then
+  echo "✓ link.ts updated successfully"
 else
-  echo "❌ Pipeline failed"
+  echo "❌ Failed to update link.ts"
   exit 1
 fi
 
-echo "✓ Pipeline completed, waiting 5 seconds for link.ts to update..."
+echo "✓ link.ts updated, waiting 5 seconds..."
 sleep 5
 
 pkill -f "devvit playtest" 2>/dev/null || true
