@@ -55,6 +55,13 @@ echo "🚀 Starting direct deployment to Reddit..."
 echo "📤 Image Link: $IMAGE_LINK"
 echo "📝 Title: $TITLE"
 
+cat > src/postConfig.json << EOF
+{
+  "imageLink": "$IMAGE_LINK",
+  "title": "$TITLE"
+}
+EOF
+
 pkill -f "devvit playtest" 2>/dev/null || true
 pkill -f "node.*devvit" 2>/dev/null || true
 sleep 2
@@ -69,9 +76,6 @@ echo "" >> src/main.ts
 
 echo "📊 Step 3: Posting image to Reddit..."
 echo ""
-
-export IMAGE_LINK="$IMAGE_LINK"
-export POST_TITLE="$TITLE"
 
 echo "⏱️  Keeping process alive for 2 minutes..."
 sleep 120

@@ -1,18 +1,29 @@
 import { Devvit} from '@devvit/public-api';
+import * as fs from 'fs';
 
 Devvit.configure({
   redditAPI: true,
   media: true,
 });
 
-const LINK = process.env.IMAGE_LINK || '';
-const TITLE = process.env.POST_TITLE || '';
+let LINK = '';
+let TITLE = '';
+
+try {
+  if (fs.existsSync('src/postConfig.json')) {
+    const config = JSON.parse(fs.readFileSync('src/postConfig.json', 'utf-8'));
+    LINK = config.imageLink || '';
+    TITLE = config.title || '';
+  }
+} catch (error) {
+  console.warn('postConfig.json not found, will use environment variables if available');
+}
 
 Devvit.addTrigger({
   event: 'AppUpgrade',
   onEvent: async (event, context) => {
     if (!LINK || !TITLE) {
-      console.error('❌ IMAGE_LINK and POST_TITLE environment variables are required');
+      console.error('❌ Image link and title are required in postConfig.json');
       process.exit(1);
     }
 
@@ -48,41 +59,3 @@ Devvit.addTrigger({
 });
 
 export default Devvit;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
