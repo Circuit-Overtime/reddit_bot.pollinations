@@ -63,9 +63,9 @@ echo "" >> src/main.ts
 echo "📊 Step 4: Watching for successful image post..."
 echo ""
 
-echo "⏱️  Keeping process alive for 2 minutes..."
+echo "⏱️  Keeping process alive for 30s ..."
 sleep 30
 
 echo ""
-echo "✅ 2 minutes elapsed. Shutting down..."
+echo "✅ 30 seconds elapsed. Shutting down..."
 exit 0
