@@ -6,22 +6,20 @@ Automated Reddit bot for r/pollinations_ai subreddit that posts updates about po
 
 ```mermaid
 graph TD
-    A[main.ts<br/>Entry Point] --> B[pipeline.ts]
-    D[.env<br/>Configuration] -.-> B
+    A["script_trigger.py<br/>Entry Point"] -->|Reddit Data| B["SSH to VPS<br/>Reddit Automation Server"]
+    D["Reddit Data<br/>Title + Image URL"] -.-> A
     
-    B --> C["getMergedPRsFromPreviousDay<br/>GitHub GraphQL API"]
-    C -->|PR Data| E{PRs Found?}
-    E -->|No| F["Exit Pipeline<br/>No PRs"]
-    E -->|Yes| G["createImagePrompt<br/>Pollinations API"]
+    B --> C["CD to Project Dir<br/>/root/reddit_post_automation"]
+    C --> E["Update link.ts<br/>Write TITLE & LINK"]
     
-    G -->|Generated Prompt| H["generateImage<br/>Pollinations Image API<br/>Max 2 Retries"]
+    E --> F["Run deploy.sh"]
+    F --> G["Kill Old Processes"]
+    G --> H["Start devvit playtest<br/>Pollinations_ai Subreddit"]
     
-    B --> I["generateTitleFromPRs<br/>Pollinations API"]
-    I -->|Generated Title| J["Prepare Output Data<br/>TITLE & LINK"]
-    
-    H -->|Image URL| J
-    J --> K["Write link.ts<br/>Export TITLE & LINK"]
-    K --> L[main.ts<br/>Post to Reddit]
+    H --> I["Trigger Update<br/>Modify og_main.ts"]
+    I --> J["Wait 1 Minute <br/>Monitor Post"]
+    J --> K["Cleanup & Exit<br/>Git Push"]
+    K --> L["Logs Available<br/>deploy.log"]
 ```
 
 > Created with 💖 by [Ayushman Bhattacharya](https://github.com/Circuit-Overtime)
