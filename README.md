@@ -1,6 +1,6 @@
-# Automated Reddit Posting Bot Pipeline for Reddit
+# Reddit Posting Bot (Devvit)
 
-Automated Reddit bot for r/pollinations_ai subreddit that posts updates about pollinations.ai.
+Posts updates to [r/pollinations_ai](https://www.reddit.com/r/pollinations_ai/) via the Devvit SDK.
 
 ## Architecture
 
@@ -22,4 +22,19 @@ graph TD
     K --> L["Logs Available<br/>deploy.log"]
 ```
 
-> Created with 💖 by [Ayushman Bhattacharya](https://github.com/Circuit-Overtime)
+
+**Triggered by:**
+- `publish_daily.py` — on daily PR merge
+- `publish_weekly.py` — Sunday 18:00 UTC cron
+
+**Required secrets:** `REDDIT_VPS_HOST`, `REDDIT_VPS_USER`, `REDDIT_VPS_SSH_KEY`
+
+## Files
+
+| File | Purpose |
+|---|---|
+| `src/main.ts` | Devvit app — reads config, uploads image, posts to Reddit |
+| `bash/deploy.sh` | Deployment script triggered via SSH from CI |
+| `devvit.json` | Devvit app config (permissions, triggers) |
+
+> Created with  by [Ayushman Bhattacharya](https://github.com/Circuit-Overtime)
