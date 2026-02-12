@@ -71,12 +71,24 @@ pkill -f "devvit playtest" 2>/dev/null || true
 pkill -f "node.*devvit" 2>/dev/null || true
 sleep 5
 
+PLAYTEST_LOG="/tmp/playtest.log"
+rm -f "$PLAYTEST_LOG"
+
 echo "📤 Step 2: Starting playtest mode..."
-$NPX devvit playtest "$SUBREDDIT" &
+$NPX devvit playtest "$SUBREDDIT" > "$PLAYTEST_LOG" 2>&1 &
 PLAYTEST_PID=$!
 
 echo "⏳ Waiting for playtest to fully initialize..."
-sleep 15
+for i in {1..15}; do
+  if grep -q "✓ Playtest ready" "$PLAYTEST_LOG" 2>/dev/null; then
+    echo "✓ Playtest fully initialized"
+    break
+  fi
+  sleep 1
+done
+
+tail -n 10 "$PLAYTEST_LOG"
+echo ""
 
 echo "⏳ Waiting additional 5 seconds before triggering update..."
 sleep 5
@@ -84,12 +96,18 @@ sleep 5
 echo "📝 Step 3: Triggering update (modify main.ts)..."
 echo "" >> /root/reddit_post_automation/src/main.ts
 
-echo "📊 Step 4: Watching for successful image post..."
+echo ""
+echo "📊 Step 4: Waiting for image post (monitoring logs)..."
+sleep 2
+tail -n 15 "$PLAYTEST_LOG"
 echo ""
 
-echo "⏱️  Keeping process alive for 2 minutes..."
+echo "⏱️  Keeping process alive for 30s"
 sleep 30
 
 echo ""
-echo "✅ 2 minutes elapsed. Shutting down..."
+echo "📋 Final playtest logs:"
+tail -n 20 "$PLAYTEST_LOG"
+echo ""
+echo "✅ Deployment complete. Shutting down..."
 exit 0
