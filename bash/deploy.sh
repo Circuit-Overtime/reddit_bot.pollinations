@@ -74,7 +74,12 @@ sleep 5
 echo "📤 Step 2: Starting playtest mode..."
 $NPX devvit playtest "$SUBREDDIT" &
 PLAYTEST_PID=$!
-sleep 3
+
+echo "⏳ Waiting for playtest to fully initialize..."
+sleep 15
+
+echo "⏳ Waiting additional 5 seconds before triggering update..."
+sleep 5
 
 echo "📝 Step 3: Triggering update (modify main.ts)..."
 echo "" >> /root/reddit_post_automation/src/main.ts
