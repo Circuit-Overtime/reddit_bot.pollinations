@@ -60,7 +60,7 @@ fi
 
 echo ""
 echo "📤 Updating the devvit app on reddit..."
-$NPX devvit update
+$NPX devvit upload
 UPDATE_EXIT_CODE=$?
 
 if [ $UPDATE_EXIT_CODE -ne 0 ]; then
