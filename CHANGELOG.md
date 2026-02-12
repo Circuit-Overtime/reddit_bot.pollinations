@@ -1,3 +1,10 @@
+## Update [12-02-2026]
+
+- Updated deploy.sh to accept image link and title as command-line parameters
+- Removed pipeline.ts execution for direct deployment mode
+- Modified main.ts to read IMAGE_LINK and POST_TITLE from environment variables
+- Eliminated dependency on link.ts, loadPrompts, and system_prompt for direct posting
+
 ## Update [03-02-2026]
 
 - Added a new key type for finegrained control

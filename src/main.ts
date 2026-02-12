@@ -1,4 +1,3 @@
-import {LINK, TITLE} from './link.js';
 import { Devvit} from '@devvit/public-api';
 
 Devvit.configure({
@@ -6,9 +5,17 @@ Devvit.configure({
   media: true,
 });
 
+const LINK = process.env.IMAGE_LINK || '';
+const TITLE = process.env.POST_TITLE || '';
+
 Devvit.addTrigger({
   event: 'AppUpgrade',
   onEvent: async (event, context) => {
+    if (!LINK || !TITLE) {
+      console.error('❌ IMAGE_LINK and POST_TITLE environment variables are required');
+      process.exit(1);
+    }
+
     try {
       console.log('🚀 Starting to post image to Reddit...');
       const imageAsset = await context.media.upload({
