@@ -52,22 +52,19 @@ Updating...
 [G[1A[JUpdating... ⣻
 [G[1A[JUpdating... ⢿
 [G[1A[JUpdating... ⡿
+[G[1A[JUpdating... ⣟
+[G[1A[JUpdating... ⣯
 [G[1A[JUpdating... Success!
 ┌────────────────────────────────────────────────────────────────────┐
 │ ✓ Playtest ready                                                   │
 │ ➜ URL: https://www.reddit.com/r/pollinations_ai/?playtest=polli-ai │
-│ ➜ Version: v0.0.76.5                                               │
+│ ➜ Version: v0.0.76.8                                               │
 │ ➜ Open the URL above and refresh to see your latest changes.       │
 └────────────────────────────────────────────────────────────────────┘
 🚀 Starting to post image to Reddit...
-✅ Image uploaded to Devvit Media Service: https://i.redd.it/uaqts4w8k2jg1.jpeg
+✅ Image uploaded to Devvit Media Service: https://i.redd.it/lx6yhxbl1ujg1.jpeg
 
 ✅ 1 minute elapsed. Shutting down...
 
 🧹 Cleaning up processes...
 📤 Committing and pushing changes to GitHub...
-[main b24f99b] Deploy updated link.ts and main.ts
- 1 file changed, 0 insertions(+), 0 deletions(-)
-✓ Cleanup complete
-ns(-)
-✓ Cleanup complete
